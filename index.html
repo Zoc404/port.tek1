@@ -94,3 +94,1392 @@
   <script src="script.js"></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Pattern Intelligence System — Slope & Deflection of Beams</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --surface3: #252525;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #e8e8e8;
+    --text2: #a0a0a0;
+    --text3: #666;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+
+    --t1: #a78bfa; --t1bg: #1a1530; --t1b: #3d2f7a;
+    --t2: #34d399; --t2bg: #0d2218; --t2b: #1a4535;
+    --t3: #fb923c; --t3bg: #201508; --t3b: #5c2d0a;
+    --t4: #60a5fa; --t4bg: #0d1a2e; --t4b: #1a3a6a;
+    --t5: #f87171; --t5bg: #200d0d; --t5b: #5c1a1a;
+    --t6: #facc15; --t6bg: #1c1700; --t6b: #4a3d00;
+    --th: #e879f9; --thbg: #1e0a20; --thb: #5c1a66;
+    --mi: #2dd4bf; --mibg: #081a18; --mib: #1a4a44;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: .4rem;
+    letter-spacing: -.01em;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1.2rem;
+  }
+  .meta-chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    background: var(--surface2);
+  }
+  .meta-chip.hot { border-color: var(--t5b); color: var(--t5); background: var(--t5bg); }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,15,15,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 2rem;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+
+  /* TOPIC FILTER BOX */
+  .topic-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .topic-box-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .8rem;
+  }
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .topic-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .topic-name { font-size: 12px; color: var(--text2); line-height: 1.4; }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2.5rem 0 1.5rem;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .section-divider-text {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    white-space: nowrap;
+  }
+
+  /* TYPE CARD */
+  .type-card {
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .type-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-badge {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .type-title-block { flex: 1; }
+  .type-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    letter-spacing: -.01em;
+  }
+  .type-subtitle { font-size: 12px; color: var(--text2); }
+  .type-freq {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .type-body { padding: 1.25rem 1.5rem; background: var(--surface); }
+  .type-body > * + * { margin-top: 1rem; }
+
+  /* INNER SECTIONS */
+  .inner-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .concept-text {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.65;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border-left: 2px solid var(--border2);
+  }
+
+  /* FORMULA */
+  .formula-block {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #0a0a0a;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #d4d4d4;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.8;
+  }
+  .formula-block .hl { color: #7dd3fc; }
+  .formula-block .val { color: #86efac; }
+  .formula-block .op { color: #f9a8d4; }
+  .formula-block .cm { color: #6b7280; }
+
+  /* STEPS */
+  .steps-grid { display: flex; flex-direction: column; gap: 4px; }
+  .step-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 6px 10px;
+    border-radius: 5px;
+    background: var(--surface2);
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    flex-shrink: 0;
+    min-width: 20px;
+    padding-top: 1px;
+  }
+  .step-text { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
+  .step-text strong { color: var(--text); font-weight: 500; }
+
+  /* METHODS CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    background: var(--surface2);
+  }
+
+  /* VARIATIONS */
+  .var-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+  .var-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .var-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* QUESTIONS TABLE */
+  .q-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .q-table thead tr { background: var(--surface2); }
+  .q-table th {
+    padding: 8px 12px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border2);
+    font-weight: 500;
+  }
+  .q-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .q-table tr:last-child td { border-bottom: none; }
+  .q-table tr:hover td { background: var(--surface2); }
+  .q-year {
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+    color: var(--text2);
+  }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    white-space: nowrap;
+  }
+  .q-text { color: var(--text2); }
+  .q-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .q-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+  .tag-beam { border-color: #3d2f7a; color: #a78bfa; background: #1a1530; }
+  .tag-load { border-color: #1a4535; color: #34d399; background: #0d2218; }
+  .tag-find { border-color: #1a3a6a; color: #60a5fa; background: #0d1a2e; }
+  .tag-method { border-color: #5c1a1a; color: #f87171; background: #200d0d; }
+  .tag-special { border-color: #4a3d00; color: #facc15; background: #1c1700; }
+  .q-type { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+  /* TIP BOX */
+  .tip-box {
+    display: flex;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .tip-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+  .tip-text { color: var(--text2); }
+  .tip-text strong { font-weight: 500; }
+
+  /* PATTERN RECOGNIZER */
+  .pattern-box {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--text2);
+    border-left: 3px solid var(--border2);
+    line-height: 1.65;
+  }
+  .pattern-box ul { margin-top: 6px; padding-left: 16px; }
+  .pattern-box li { margin-bottom: 3px; }
+
+  /* THEORY SECTION */
+  .theory-card {
+    background: var(--surface);
+    border: 1px solid var(--thb);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .theory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .8rem 1.25rem;
+    background: var(--thbg);
+    border-bottom: 1px solid var(--thb);
+    gap: 10px;
+  }
+  .theory-q { font-size: 13px; color: var(--text); line-height: 1.4; flex: 1; }
+  .theory-body { padding: 1rem 1.25rem; }
+  .theory-freq {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: var(--thb);
+    color: var(--th);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .theory-row {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  .theory-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    flex-shrink: 0;
+    padding-top: 2px;
+    min-width: 70px;
+    text-transform: uppercase;
+  }
+  .theory-val { color: var(--text2); line-height: 1.5; }
+
+  /* MOST IMPORTANT */
+  .mi-card {
+    background: var(--mibg);
+    border: 1px solid var(--mib);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .mi-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: .8rem;
+  }
+  .mi-icon { font-size: 16px; }
+  .mi-title { font-size: 14px; font-weight: 600; color: var(--mi); }
+  .mi-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .mi-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 5px;
+    border: 1px solid rgba(45,212,191,0.08);
+  }
+  .mi-bullet {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mi);
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .mi-text { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+  .mi-text strong { color: var(--text); font-weight: 500; }
+
+  /* SUMMARY TABLE */
+  .sum-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sum-table th {
+    padding: 8px 12px;
+    background: var(--surface2);
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border2);
+    font-weight: 500;
+  }
+  .sum-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .sum-table tr:last-child td { border-bottom: none; }
+  .priority-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ANCHOR OFFSET */
+  [id] { scroll-margin-top: 52px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="site-header">
+  <div class="header-label">Question Pattern Intelligence System · Structural Analysis I</div>
+  <div class="header-title">Unit III — Slope &amp; Deflection of Beams: Geometric Methods</div>
+  <div class="header-sub">Pokhara University · Exam Pattern Analysis · 2013 Fall → 2022 Fall · 17 Questions Classified</div>
+  <div class="header-meta">
+    <span class="meta-chip">6 hrs syllabus</span>
+    <span class="meta-chip">6 question types</span>
+    <span class="meta-chip">17 previous questions</span>
+    <span class="meta-chip hot">★★ Type 5 = most repeated</span>
+    <span class="meta-chip">Methods: Double Integration · Macaulay · Moment Area · Conjugate Beam</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <span class="nav-label">Jump →</span>
+  <a class="nav-btn" href="#topics">Topics</a>
+  <a class="nav-btn" style="border-color:#3d2f7a;color:#a78bfa" href="#t1">Type 1</a>
+  <a class="nav-btn" style="border-color:#1a4535;color:#34d399" href="#t2">Type 2</a>
+  <a class="nav-btn" style="border-color:#5c2d0a;color:#fb923c" href="#t3">Type 3</a>
+  <a class="nav-btn" style="border-color:#1a3a6a;color:#60a5fa" href="#t4">Type 4</a>
+  <a class="nav-btn" style="border-color:#5c1a1a;color:#f87171" href="#t5">Type 5</a>
+  <a class="nav-btn" style="border-color:#4a3d00;color:#facc15" href="#t6">Type 6</a>
+  <a class="nav-btn" style="border-color:#5c1a66;color:#e879f9" href="#theory">Theory</a>
+  <a class="nav-btn" style="border-color:#1a4a44;color:#2dd4bf" href="#most-imp">Most Imp.</a>
+</div>
+
+<div class="container">
+
+  <!-- TOPIC FILTERS -->
+  <div id="topics" class="topic-box" style="margin-top:1.5rem">
+    <div class="topic-box-title">Syllabus Scope — Topics Included</div>
+    <div class="topic-grid">
+      <div class="topic-item"><span class="topic-num">3.1</span><span class="topic-name">Double Integration Method</span></div>
+      <div class="topic-item"><span class="topic-num">3.2</span><span class="topic-name">Macaulay's Method</span></div>
+      <div class="topic-item"><span class="topic-num">3.3</span><span class="topic-name">Superposition Method</span></div>
+      <div class="topic-item"><span class="topic-num">3.4</span><span class="topic-name">Conjugate Beam Method</span></div>
+      <div class="topic-item"><span class="topic-num">3.5</span><span class="topic-name">Moment Area Method</span></div>
+      <div class="topic-item"><span class="topic-num">3.6</span><span class="topic-name">Conjugate Beam (Advanced)</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION LABEL -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-text">Numerical Question Types</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 1 ═══ -->
+  <div id="t1" class="type-card" style="background:var(--t1bg);border-color:var(--t1b)">
+    <div class="type-header" style="background:#12102a;border-color:var(--t1b)">
+      <div class="type-badge" style="background:var(--t1b);color:var(--t1)">T-1</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t1)">Simply Supported Beam — Uniform EI, Standard Load</div>
+        <div class="type-subtitle">Double Integration Method · Moment Area Method</div>
+      </div>
+      <div class="type-freq" style="background:var(--t1b);color:var(--t1)">Low · 2 Qs</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">Standard simply supported beam with ONE load type (single point load OR full-span UDL). EI is constant throughout. Find slope at supports and/or deflection at mid-span or any point. This is the foundational type — all other types build on it.</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Methods Used</div>
+        <div class="chips">
+          <span class="chip" style="border-color:var(--t1b);color:var(--t1)">Double Integration</span>
+          <span class="chip" style="border-color:var(--t1b);color:var(--t1)">Moment Area Theorem</span>
+          <span class="chip">Conjugate Beam (alternate)</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Formula</div>
+        <div class="formula-block"><span class="cm">// Double Integration</span>
+EI·d²y/dx² = <span class="hl">M(x)</span>
+EI·dy/dx  = ∫M(x)dx + <span class="val">C₁</span>      <span class="cm">← slope equation</span>
+EI·y      = ∫∫M(x)dx + <span class="val">C₁</span>x + <span class="val">C₂</span>  <span class="cm">← deflection equation</span>
+
+<span class="cm">// Boundary Conditions for SSB</span>
+y = 0 at x = 0  →  <span class="val">C₂ = 0</span>
+y = 0 at x = L  →  solve for <span class="val">C₁</span>
+
+<span class="cm">// Standard Results (memorize)</span>
+θ_max = <span class="op">PL²/16EI</span>     δ_max = <span class="op">PL³/48EI</span>   <span class="cm">(central point load)</span>
+θ_max = <span class="op">wL³/24EI</span>     δ_max = <span class="op">5wL⁴/384EI</span> <span class="cm">(full UDL)</span></div>
+      </div>
+
+      <div>
+        <div class="inner-label">How to Recognize in Exam</div>
+        <div class="pattern-box">
+          You see this type when: SSB with <strong>single clean load</strong>, no overhangs, no internal hinges, EI = constant.
+          <ul>
+            <li>Question asks: slope at A, slope at B, deflection at centre/midspan, or deflection at any single x</li>
+            <li>One M(x) expression covers the whole span without breaks</li>
+            <li>Integrate twice → apply two BCs → done</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Sub-Variations</div>
+        <div class="var-grid">
+          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Symmetric loading, find θ_A</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Rotation at A only (moment area)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Deflection at centre</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Both slope and deflection at same point</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t1b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q3</td>
+              <td class="q-year">2015 Fall</td>
+              <td class="q-text">Find slope at A — stepped SSB (3EI, 2EI spans), point loads only, using moment area method
+                <div class="q-tags">
+                  <span class="q-tag tag-beam">SSB</span>
+                  <span class="q-tag tag-load">Point Load</span>
+                  <span class="q-tag tag-find">Slope at A</span>
+                  <span class="q-tag tag-method">Moment Area</span>
+                </div>
+              </td>
+              <td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q6</td>
+              <td class="q-year">2015 Spring</td>
+              <td class="q-text">Find rotation at A — SSB with two equal point loads (symmetric), stepped EI (I, 2I, I), using moment area method
+                <div class="q-tags">
+                  <span class="q-tag tag-beam">SSB</span>
+                  <span class="q-tag tag-load">2 Equal Loads</span>
+                  <span class="q-tag tag-find">Rotation at A</span>
+                  <span class="q-tag tag-method">Moment Area</span>
+                  <span class="q-tag tag-special">Symmetric</span>
+                </div>
+              </td>
+              <td class="q-type">Numerical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#12102a;border:1px solid var(--t1b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>Exam tip:</strong> Both Q3 and Q6 appear simple but have <strong>stepped EI</strong> — making them actually Type 3 hybrids. Master Type 3 first. For pure Type 1 (uniform EI), use standard formula directly — no integration needed. Symmetry shortcut: if loading and beam are symmetric, θ_A = θ_B in magnitude, compute only one side.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 2 ═══ -->
+  <div id="t2" class="type-card" style="background:var(--t2bg);border-color:var(--t2b)">
+    <div class="type-header" style="background:#09180f;border-color:var(--t2b)">
+      <div class="type-badge" style="background:var(--t2b);color:var(--t2)">T-2</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t2)">Multiple / Partial Loads — Macaulay's Method</div>
+        <div class="type-subtitle">Double Integration with Bracket Notation · Discontinuous Loading</div>
+      </div>
+      <div class="type-freq" style="background:var(--t2b);color:var(--t2)">Medium · 1 Q</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">SSB or overhanging beam with more than one point load, OR a UDL that does NOT cover the full span. A single clean M(x) cannot be written — Macaulay's bracket notation ⟨x−a⟩ handles each load discontinuity in ONE unified equation, so integration is done only once.</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Methods Used</div>
+        <div class="chips">
+          <span class="chip" style="border-color:var(--t2b);color:var(--t2)">Macaulay's Method</span>
+          <span class="chip" style="border-color:var(--t2b);color:var(--t2)">Double Integration</span>
+          <span class="chip">Partial UDL Extension Trick</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Formula &amp; Rules</div>
+        <div class="formula-block"><span class="cm">// General Macaulay equation (section at extreme right X-X)</span>
+EI·d²y/dx² = R_A·x <span class="op">−</span> P₁⟨x<span class="op">−</span>a⟩ <span class="op">−</span> P₂⟨x<span class="op">−</span>b⟩ <span class="op">−</span> (w/2)⟨x<span class="op">−</span>c⟩² <span class="op">+</span> (w/2)⟨x<span class="op">−</span>d⟩²
+
+<span class="cm">// PARTIAL UDL TRICK — for UDL from x=c to x=d only:</span>
+<span class="val">Extend UDL to right end → then add equal+opposite UDL from x=d</span>
+<span class="val">This gives: −(w/2)⟨x−c⟩² + (w/2)⟨x−d⟩²</span>
+
+<span class="cm">// Rules:</span>
+<span class="hl">Rule 1:</span> NEVER drop bracket terms mid-integration
+<span class="hl">Rule 2:</span> Only substitute x AND drop terms where ⟨x−a⟩ &lt; 0 at FINAL step
+<span class="hl">Rule 3:</span> Point load → ⟨x−a⟩¹, UDL → ⟨x−a⟩², Moment → ⟨x−a⟩⁰</div>
+      </div>
+
+      <div>
+        <div class="inner-label">How to Recognize in Exam</div>
+        <div class="pattern-box">
+          You see this type when: multiple point loads at different positions, OR UDL over part of span only.
+          <ul>
+            <li>Keywords: "UDL over middle third", "concentrated loads at 1m, 4m, 7m", "two point loads"</li>
+            <li>Cannot write single M(x) — must section at extreme right end</li>
+            <li>Usually asks: deflection at mid-span or at load point</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Sub-Variations</div>
+        <div class="var-grid">
+          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Partial UDL (middle ⅓ of span)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Two or more point loads</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>UDL + point loads combined</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Overhang with multiple loads</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>End moment + point load</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t2b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q5</td>
+              <td class="q-year">2015 Fall</td>
+              <td class="q-text">SSB span 6m, overhangs 2m each side. UDL 5kN/m on middle 6m only. Point loads 20kN each at 1m from free ends. Find deflection at midspan. Use Macaulay's method.
+                <div class="q-tags">
+                  <span class="q-tag tag-beam">SSB + Overhang</span>
+                  <span class="q-tag tag-load">Partial UDL + 2 Point Loads</span>
+                  <span class="q-tag tag-find">Mid-span Deflection</span>
+                  <span class="q-tag tag-method">Macaulay's</span>
+                  <span class="q-tag tag-special">Partial UDL Trick</span>
+                </div>
+              </td>
+              <td class="q-type">Numerical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#09180f;border:1px solid var(--t2b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>Critical trick in Q5:</strong> The UDL acts only on the middle 6m — NOT the full 10m span. To handle this in Macaulay's: extend UDL to the right end, then subtract it back from x=8. This is the most commonly missed step. Also: reactions at overhanging supports need careful ΣM calculation from the extreme end, not from one support.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 3 ═══ -->
+  <div id="t3" class="type-card" style="background:var(--t3bg);border-color:var(--t3b)">
+    <div class="type-header" style="background:#160e04;border-color:var(--t3b)">
+      <div class="type-badge" style="background:var(--t3b);color:var(--t3)">T-3</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t3)">Stepped / Varying EI Beam — M/EI Diagram Method</div>
+        <div class="type-subtitle">Moment Area · Conjugate Beam · EI changes span-to-span</div>
+      </div>
+      <div class="type-freq" style="background:var(--t3b);color:var(--t3)">★ High · 5 Qs</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">Beam has different flexural stiffness in different spans — e.g. 3EI, 2EI, EI. You CANNOT use a uniform M/EI. Each span's bending moment ordinate must be divided by its own local EI to get the M/EI ordinate. In later questions (Q14, Q16), E and cross-section dimensions are given numerically — you must compute I = bd³/12 first, then EI in kN·m².</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Methods Used</div>
+        <div class="chips">
+          <span class="chip" style="border-color:var(--t3b);color:var(--t3)">Moment Area Theorem 1 &amp; 2</span>
+          <span class="chip" style="border-color:var(--t3b);color:var(--t3)">Conjugate Beam (verification)</span>
+          <span class="chip">M/EI diagram (piecewise)</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Formula</div>
+        <div class="formula-block"><span class="cm">// M/EI ordinate — use LOCAL EI of that span</span>
+Ordinate = M(x) ÷ <span class="hl">local EI of that span</span>
+  → span with 2EI: ordinate = M / 2EI  <span class="cm">(half the value!)</span>
+  → span with 3EI: ordinate = M / 3EI
+
+<span class="cm">// When numerical E, b, d given:</span>
+I = <span class="val">bd³ / 12</span>   (in mm⁴ → convert to m⁴: ×10⁻¹²)
+EI = E × I     (in kN·m²)
+
+<span class="cm">// Moment Area Theorem 2:</span>
+Δ_B/A = <span class="op">Σ( Area_i × x̄_i )</span>  about point B
+θ_A   = Δ_B/A / L
+
+<span class="cm">// Centroid of standard shapes:</span>
+Triangle: x̄ = L/3 from taller end
+Parabola (UDL): x̄ = 3L/8 from taller end, area = (2/3)bh</div>
+      </div>
+
+      <div>
+        <div class="inner-label">How to Recognize in Exam</div>
+        <div class="pattern-box">
+          Keywords: "EI", "2EI", "3EI" labeled on beam diagram — OR numerical values of E (in N/mm²) + b×d given.
+          <ul>
+            <li>Beam is drawn with different stiffness labels for different portions</li>
+            <li>OR: "Take E = 12600 N/mm², consider 350mm wide 500mm deep beam"</li>
+            <li>Always compute I = bd³/12 first when dimensions are given</li>
+            <li>Draw M/EI diagram SEPARATELY for each span segment</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Sub-Variations</div>
+        <div class="var-grid">
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>2-span: EI + 2EI</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>3-span: 3EI + 2EI + EI</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Symmetric: I + 2I + I</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Numerical E + I (compute I first)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Find slope at A only</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Find both slope + deflection</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Answer in mm (convert ×1000)</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t3b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q3</td>
+              <td class="q-year">2015 Fall</td>
+              <td class="q-text">SSB, stepped EI (3EI, 2EI spans), point loads. Find slope at A using moment area method.
+                <div class="q-tags"><span class="q-tag tag-beam">SSB</span><span class="q-tag tag-load">Point Loads</span><span class="q-tag tag-find">Slope at A</span><span class="q-tag tag-method">Moment Area</span><span class="q-tag tag-special">Stepped EI</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q6</td>
+              <td class="q-year">2015 Spring</td>
+              <td class="q-text">SSB, 3 spans (I, 2I, I), two equal 8kN loads. Find rotation at A.
+                <div class="q-tags"><span class="q-tag tag-beam">SSB Symmetric</span><span class="q-tag tag-load">2×8kN</span><span class="q-tag tag-find">Rotation at A</span><span class="q-tag tag-method">Moment Area</span><span class="q-tag tag-special">I + 2I + I</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q10</td>
+              <td class="q-year">2017 Fall</td>
+              <td class="q-text">SSB with overhang, stepped EI (2EI + EI), 20kN + 10kN/m + 30kN. Find slope at A and deflection at C using moment area AND conjugate beam.
+                <div class="q-tags"><span class="q-tag tag-beam">SSB + Overhang</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">Slope &amp; Deflection</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">2EI + EI</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q14</td>
+              <td class="q-year">2019 Fall</td>
+              <td class="q-text">Stepped beam (2EI, EI), 20kN + 8kN/m UDL. E = 12600 N/mm², 350mm×500mm section. Find deflection at B and D, slope at A. Verify by moment area and conjugate beam.
+                <div class="q-tags"><span class="q-tag tag-beam">Stepped Beam</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">Deflection in mm</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Numerical EI</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q16</td>
+              <td class="q-year">2021 Fall</td>
+              <td class="q-text">Stepped beam (2EI, EI), 10kN/m + 40kN. E = 13000 N/mm², 400mm×500mm section. Find deflection at B using conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">Stepped Beam</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection at B (mm)</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Numerical EI</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#160e04;border:1px solid var(--t3b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>Most common mistake:</strong> Using same EI for all spans. Each span has its OWN ordinate. For numerical EI (Q14, Q16): compute I = bd³/12 in mm⁴ → convert to m⁴ (× 10⁻¹²) → multiply by E in kN/m² → get EI. Final answer: divide by EI and convert to mm (× 1000). <strong>Q14 answer: Δ_D = 8.98 mm, Δ_B = 1.80 mm.</strong></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 4 ═══ -->
+  <div id="t4" class="type-card" style="background:var(--t4bg);border-color:var(--t4b)">
+    <div class="type-header" style="background:#091524;border-color:var(--t4b)">
+      <div class="type-badge" style="background:var(--t4b);color:var(--t4)">T-4</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t4)">Overhang Beam — Slope &amp; Deflection at Free End</div>
+        <div class="type-subtitle">Conjugate Beam Method · Free End Analysis</div>
+      </div>
+      <div class="type-freq" style="background:var(--t4b);color:var(--t4)">★ High · 4 Qs</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">Beam extends beyond one or both supports (overhang). The overhanging portion behaves like a cantilever. In the conjugate beam method: the free end of the real beam remains a free end in the conjugate beam — it carries M/EI load but has NO support. Slope at free end = shear in conjugate beam at that point. Deflection at free end = moment in conjugate beam at that point.</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Methods Used</div>
+        <div class="chips">
+          <span class="chip" style="border-color:var(--t4b);color:var(--t4)">Conjugate Beam Method</span>
+          <span class="chip" style="border-color:var(--t4b);color:var(--t4)">Moment Area (verification)</span>
+          <span class="chip">Superposition (for complex loads)</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Formula &amp; Support Conversion</div>
+        <div class="formula-block"><span class="cm">// Conjugate Beam Support Conversion Rules:</span>
+Real beam Pin    → Conjugate beam <span class="hl">Pin</span>
+Real beam Roller → Conjugate beam <span class="hl">Roller</span>
+Real beam Fixed  → Conjugate beam <span class="hl">Free end</span>  <span class="cm">← (they swap!)</span>
+Real beam Free   → Conjugate beam <span class="hl">Fixed end</span> <span class="cm">← (they swap!)</span>
+
+<span class="cm">// For overhang: free end stays free in conjugate beam</span>
+<span class="cm">// (overhang free end is NOT a fixed end)</span>
+
+<span class="cm">// At free end C of conjugate beam:</span>
+θ_C = <span class="val">V'_C</span>  (shear in conjugate beam at C)
+Δ_C = <span class="val">M'_C</span>  (moment in conjugate beam at C)
+
+<span class="cm">// Sign: −ve M' → downward deflection (sagging is +ve)</span></div>
+      </div>
+
+      <div>
+        <div class="inner-label">How to Recognize in Exam</div>
+        <div class="pattern-box">
+          Keywords: "beam with overhang", "free end", "deflection at C (free end)", diagram shows beam extending past a support.
+          <ul>
+            <li>Overhang part of BMD is usually negative (hogging) — triangular shape</li>
+            <li>Conjugate beam has M/EI load on overhang part but no tip support</li>
+            <li>Take moment about supports to find R'_A, R'_B, then cut section at C</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Sub-Variations</div>
+        <div class="var-grid">
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>UDL on overhang portion only</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Point load at free end</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Varying UDL on overhang</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Deflection at midpoint of span (not free end)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Stepped EI + overhang combined</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Slope AND deflection both required</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t4b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q4</td>
+              <td class="q-year">2015 Fall</td>
+              <td class="q-text">SSB (4m) + overhang (2m). 30kN/m UDL on overhang portion. Find slope and deflection at free end C using conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL on overhang</span><span class="q-tag tag-find">θ_C, Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q7</td>
+              <td class="q-year">2015 Spring</td>
+              <td class="q-text">SSB (4m) + overhang (2m). 30kN/m UDL on cantilever part. Find slope and deflection at free end using conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL on overhang</span><span class="q-tag tag-find">θ, Δ at free end</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Similar to Q4</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q13</td>
+              <td class="q-year">2018 Spring</td>
+              <td class="q-text">Overhanging beam (2EI, EI). Varying UDL 20kN/m + 5kN point load. Find deflection at midpoint of span BC using conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">Overhang + Stepped EI</span><span class="q-tag tag-load">Varying UDL + Point Load</span><span class="q-tag tag-find">Mid BC Deflection</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Integration for Area</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q16</td>
+              <td class="q-year">2021 Fall</td>
+              <td class="q-text">Stepped beam (2EI, EI) with overhang. 10kN/m UDL + 40kN. E = 13000 N/mm², 400×500mm. Find deflection at B in mm.
+                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection (mm)</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Numerical EI</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#091524;border:1px solid var(--t4b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>Q4 and Q7 are nearly identical</strong> — same beam configuration (4m + 2m overhang), same load type (UDL on overhang). University repeated this. <strong>Q13 is harder</strong>: non-standard M/EI shape (not triangle or parabola) — must use integration to find area and centroid, not ½bh shortcut. M/EI diagram has a parabolic + triangular component.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 5 ═══ -->
+  <div id="t5" class="type-card" style="background:var(--t5bg);border-color:var(--t5b)">
+    <div class="type-header" style="background:#160808;border-color:var(--t5b)">
+      <div class="type-badge" style="background:var(--t5b);color:var(--t5)">T-5</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t5)">Compound Beam with Internal Hinge — Conjugate Beam FBD Split</div>
+        <div class="type-subtitle">Most Repeated Pattern · Superposition + FBD Analysis of Conjugate Beam</div>
+      </div>
+      <div class="type-freq" style="background:var(--t5b);color:var(--t5)">★★ Very High · 7 Qs</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">Beam has one or more internal hinges connecting multiple spans. Cannot be analysed as a single beam. In the conjugate beam: internal hinges remain as internal hinges. The compound conjugate beam is split at each hinge into separate FBDs (A'B', B'C', C'D' etc.) and each FBD is analysed independently using equilibrium. This is the single most-repeated question type in PU exams — appears in 7 out of 17 questions.</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Methods Used</div>
+        <div class="chips">
+          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Conjugate Beam (primary)</span>
+          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Moment Area (verification)</span>
+          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Superposition</span>
+          <span class="chip">FBD Equilibrium at Hinges</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Principle &amp; Formula</div>
+        <div class="formula-block"><span class="cm">// At internal hinge in conjugate beam — CRITICAL:</span>
+M' = <span class="hl">0</span>  (moment in conjugate beam at hinge = 0)
+<span class="cm">// This is the KEY equation. Use ΣM=0 about the hinge to find unknowns.</span>
+
+<span class="cm">// V' transfers between parts (NOT zero at hinge):</span>
+V'_left ≠ V'_right at hinge  (there is shear transfer)
+
+<span class="cm">// FBD procedure for each part:</span>
+ΣM = 0  → solve for internal forces at hinge
+ΣFy = 0 → find V' values
+
+<span class="cm">// At any point in conjugate beam:</span>
+Slope     = <span class="val">V'</span>  (shear at that section)
+Deflection = <span class="val">M'</span>  (moment at that section)
+
+<span class="cm">// Conjugate beam support conversion:</span>
+Pin/Roller → unchanged
+Internal hinge → <span class="op">remains internal hinge</span>
+Fixed → Free,   Free → Fixed</div>
+      </div>
+
+      <div>
+        <div class="inner-label">How to Recognize in Exam</div>
+        <div class="pattern-box">
+          Instantly recognizable: beam diagram shows a small circle (∘) symbol at one or more intermediate points — that is an internal hinge.
+          <ul>
+            <li>Beam has 2 or more spans connected by hinges</li>
+            <li>Keywords: "internal hinge at B", "compound beam", "Gerber beam"</li>
+            <li>Superposition usually needed to split complex loads into manageable sub-beams</li>
+            <li>Always draw full M/EI diagram FIRST before splitting into FBDs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Step-by-Step Solving Order</div>
+        <div class="steps-grid">
+          <div class="step-row"><span class="step-num">01</span><span class="step-text"><strong>Superposition if needed:</strong> Split complex loading into 2 simple sub-beams. Find reactions for each part separately.</span></div>
+          <div class="step-row"><span class="step-num">02</span><span class="step-text"><strong>Draw full BMD</strong> for the complete compound beam. Mark +ve (sagging) and −ve (hogging) regions clearly.</span></div>
+          <div class="step-row"><span class="step-num">03</span><span class="step-text"><strong>Draw M/EI diagram</strong> — divide each BMD ordinate by local EI if stepped, otherwise by uniform EI.</span></div>
+          <div class="step-row"><span class="step-num">04</span><span class="step-text"><strong>Draw conjugate beam</strong> with same M/EI as distributed load. Keep internal hinges exactly as in real beam.</span></div>
+          <div class="step-row"><span class="step-num">05</span><span class="step-text"><strong>Detach at internal hinges</strong> → separate FBDs (A'B', B'C', C'D'). Each FBD has its own unknown shear and moment at the cut.</span></div>
+          <div class="step-row"><span class="step-num">06</span><span class="step-text"><strong>For each FBD:</strong> ΣM=0 about hinge point (using M'=0 condition) → find unknowns. Then ΣFy=0 → find V'.</span></div>
+          <div class="step-row"><span class="step-num">07</span><span class="step-text"><strong>Read results:</strong> Slope at any point = V' at that section. Deflection at any point = M' at that section in conjugate beam.</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Sub-Variations</div>
+        <div class="var-grid">
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>1 internal hinge, 2 spans</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>2 internal hinges, 3 spans</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>3 internal hinges (most complex)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Compound + stepped EI</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Point load + UDL + end moment</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>All 3 methods compared (Q9, Q17)</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Slope at support + deflection at mid</div>
+          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Deflection at span midpoint</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t5b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q1</td>
+              <td class="q-year">2013 Fall</td>
+              <td class="q-text">Compound beam, 2 internal hinges. 50kN point load + 12kN/m UDL. Find slope at A and vertical deflection at C. Use conjugate beam AND moment area.
+                <div class="q-tags"><span class="q-tag tag-beam">Compound (2 hinges)</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">θ_A, Δ_C</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Superposition</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q2</td>
+              <td class="q-year">2014 Fall</td>
+              <td class="q-text">Compound beam. 20kN + 10kN/m + 30kN loads. Find deflection at B and D, slope at A using moment area AND conjugate beam.
+                <div class="q-tags"><span class="q-tag tag-beam">Compound Beam</span><span class="q-tag tag-load">3 load types</span><span class="q-tag tag-find">θ_A, Δ_B, Δ_D</span><span class="q-tag tag-method">Both Methods</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q9</td>
+              <td class="q-year">2016 Spring</td>
+              <td class="q-text">Multi-span beam with 5kN UDL + 5kN point load. Find deflection at free ends E using moment area, integration + Macaulay, AND conjugate beam. Compare all three.
+                <div class="q-tags"><span class="q-tag tag-beam">Multi-span</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection at E</span><span class="q-tag tag-method">All 3 Methods</span><span class="q-tag tag-special">★ Multi-method</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q11</td>
+              <td class="q-year">2017 Spring</td>
+              <td class="q-text">Beam with 3 internal hinges. 5kN/m + 20kN + 50kNm end moment. Find slope at A, deflection at C. Conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">3 Hinges</span><span class="q-tag tag-load">UDL + Point + Moment</span><span class="q-tag tag-find">θ_A, Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Most Complex</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q12</td>
+              <td class="q-year">2018 Fall</td>
+              <td class="q-text">Compound beam, 20kN/m UDL on both spans. Find change in slope at A, deflection at D. Use conjugate beam AND moment area.
+                <div class="q-tags"><span class="q-tag tag-beam">Compound Beam</span><span class="q-tag tag-load">UDL both spans</span><span class="q-tag tag-find">Slope at A, Δ_D</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Symmetric UDL</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q15</td>
+              <td class="q-year">2020 Fall</td>
+              <td class="q-text">Compound beam (I, 2I). 30kN + 80kN + 10kN/m. Find deflection at C using conjugate beam method.
+                <div class="q-tags"><span class="q-tag tag-beam">Compound + Stepped EI</span><span class="q-tag tag-load">2 Point + UDL</span><span class="q-tag tag-find">Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Stepped + Compound</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+            <tr>
+              <td class="q-num">Q17</td>
+              <td class="q-year">2022 Fall</td>
+              <td class="q-text">Multi-span beam (EI, EI). 50kN + 100kN. Find deflection at E and D. Use conjugate beam, verify by integration AND moment area.
+                <div class="q-tags"><span class="q-tag tag-beam">Multi-span</span><span class="q-tag tag-load">2 Point Loads</span><span class="q-tag tag-find">Δ_E, Δ_D</span><span class="q-tag tag-method">All 3 Methods</span><span class="q-tag tag-special">★ Multi-method</span></div>
+              </td><td class="q-type">Numerical</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#160808;border:1px solid var(--t5b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>This type appears in EVERY year from 2013–2022 except alternating years.</strong> At the internal hinge: M' = 0 is the magic condition — always write ΣM = 0 about the hinge FIRST. V' is not zero. <strong>Q9 and Q17</strong> ask all three methods — in exams, do conjugate beam first (fastest), moment area second, integration last. <strong>Q11 is the hardest</strong> (3 hinges + end moment) — practice this last.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TYPE 6 ═══ -->
+  <div id="t6" class="type-card" style="background:var(--t6bg);border-color:var(--t6b)">
+    <div class="type-header" style="background:#130f00;border-color:var(--t6b)">
+      <div class="type-badge" style="background:var(--t6b);color:var(--t6)">T-6</div>
+      <div class="type-title-block">
+        <div class="type-title" style="color:var(--t6)">Design / Reverse Problem — Find Unknown Load for Deflection Limit</div>
+        <div class="type-subtitle">Symbolic Analysis · Back-Calculation · Both Methods Required</div>
+      </div>
+      <div class="type-freq" style="background:var(--t6b);color:var(--t6)">Rare · 1 Q</div>
+    </div>
+    <div class="type-body">
+
+      <div>
+        <div class="inner-label">Core Concept</div>
+        <div class="concept-text">A deflection LIMIT is specified (e.g. Δ_C ≤ 100mm). The UDL intensity w is unknown. You perform the full conjugate beam or moment area analysis symbolically — keeping w in all expressions — to get Δ_C = f(w). Then set f(w) = limit and solve for w. This is the only "design" question type in this chapter.</div>
+      </div>
+
+      <div>
+        <div class="inner-label">Key Formula</div>
+        <div class="formula-block"><span class="cm">// Express deflection symbolically in terms of w:</span>
+Δ_C = <span class="hl">225w / 128EI</span>  (derived from conjugate beam analysis)
+
+<span class="cm">// Set equal to limit (convert mm → m first!):</span>
+<span class="val">100 mm = 0.1 m</span>
+
+<span class="cm">// Back-calculate:</span>
+0.1 = 225w / (128 × 4000)
+w = <span class="val">0.1 × 128 × 4000 / 225 = 227.56 kN/m</span></div>
+      </div>
+
+      <div>
+        <div class="inner-label">Previous Questions</div>
+        <table class="q-table" style="border:1px solid var(--t6b);border-radius:8px;overflow:hidden">
+          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="q-num">Q8</td>
+              <td class="q-year">2015 Fall</td>
+              <td class="q-text">Stepped EI beam (2EI + EI): 4m + 1.5m. UDL w kN/m on full span. EI = 4000 kN·m². Find w such that deflection at free end does not exceed 100mm. Verify using both moment area and conjugate beam.
+                <div class="q-tags"><span class="q-tag tag-beam">Stepped EI Overhang</span><span class="q-tag tag-load">UDL (unknown w)</span><span class="q-tag tag-find">Find w for Δ ≤ 100mm</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Design Problem</span></div>
+              </td><td class="q-type">Numerical (Design)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:#130f00;border:1px solid var(--t6b)">
+        <span class="tip-icon">⚠️</span>
+        <span class="tip-text"><strong>Rare type but unique enough to reappear.</strong> Steps: (1) Find reactions in terms of w. (2) Draw M/EI with w in all ordinates. (3) Get Δ_C = expression in w. (4) Set = 0.1 m (not 100!). (5) Solve for w. Substitute EI numerically only at the last step. <strong>Answer: w = 227.56 kN/m.</strong></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════ THEORY SECTION ═══════════════════ -->
+  <div class="section-divider" id="theory">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-text">Theory / Short Answer Questions</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-header">
+      <div class="theory-q">Prove that shear force at any section of a conjugate beam equals the slope at the corresponding section of the real beam.</div>
+      <span class="theory-freq">2015 Fall · Derivation</span>
+    </div>
+    <div class="theory-body">
+      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Conjugate Beam Theory — Proof of Analogy</span></div>
+      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">The elastic curve equation EI d²y/dx² = M is mathematically identical to the conjugate beam equilibrium equation dV'/dx = −w' where w' = M/EI. Hence V' ↔ slope, M' ↔ deflection.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Start from Euler-Bernoulli beam equation. Show differential equation for elastic curve matches equilibrium equation for conjugate beam. State the analogy table clearly.</span></div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-header">
+      <div class="theory-q">State and explain both theorems of the moment area method.</div>
+      <span class="theory-freq">Frequently implied · Conceptual</span>
+    </div>
+    <div class="theory-body">
+      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Moment Area Method — Theorems 1 and 2</span></div>
+      <div class="theory-row"><span class="theory-lbl">Theorem 1</span><span class="theory-val">The change in slope between two points A and B = Area of M/EI diagram between A and B.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Theorem 2</span><span class="theory-val">The tangential deviation of B from tangent at A = First moment of M/EI area between A and B, taken about B.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Draw a clear deflection curve. Mark tangent lines at A and B. Show θ_B/A geometrically and Δ_B/A with CG distance. Examiners expect the diagram — not just formula.</span></div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-header">
+      <div class="theory-q">Explain the conjugate beam method. State the support conversion rules.</div>
+      <span class="theory-freq">Conceptual — base theory</span>
+    </div>
+    <div class="theory-body">
+      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Conjugate Beam Method — Concept + Support Rules</span></div>
+      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">A fictitious beam (conjugate) is loaded with the M/EI diagram of the real beam. Shear in conjugate beam = slope in real beam. Moment in conjugate beam = deflection in real beam.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Support rules</span><span class="theory-val">Pin→Pin · Roller→Roller · Fixed→Free · Free→Fixed · Internal Hinge→Internal Hinge</span></div>
+      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Draw both real beam and conjugate beam side by side. Show support conversion clearly. This table is always worth 2–3 marks if asked.</span></div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-header">
+      <div class="theory-q">State Macaulay's method. What is the advantage over the double integration method for discontinuous loads?</div>
+      <span class="theory-freq">Short answer type</span>
+    </div>
+    <div class="theory-body">
+      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Macaulay's Method — Concept and Advantage</span></div>
+      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">Uses ⟨x−a⟩ bracket notation to write a SINGLE bending moment equation valid for the entire beam, regardless of load discontinuities. Integration is performed only once.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Advantage</span><span class="theory-val">For multiple loads or partial UDL, double integration requires separate M(x) for each region and matching boundary conditions at each junction. Macaulay's avoids this entirely with one equation.</span></div>
+      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">State the bracket rule: ⟨x−a⟩ = 0 when x &lt; a, and = (x−a) when x ≥ a. Give a short example with one point load.</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ MOST IMPORTANT ═══════════════════ -->
+  <div class="section-divider" id="most-imp">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-text">Most Important Questions &amp; Patterns</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="mi-card">
+    <div class="mi-header"><span class="mi-icon">🔴</span><span class="mi-title">Most Repeated Numericals (Must Practice)</span></div>
+    <ul class="mi-list">
+      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q1 (2013 Fall)</strong> — Compound beam + 2 hinges + both methods. This IS the template for all Type 5 questions. If you master this, Q2, Q12 are straightforward.</span></li>
+      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q9 (2016 Spring) + Q17 (2022 Fall)</strong> — Both ask all 3 methods on a multi-span compound beam. University clearly loves this format. Expect a 3-method question in upcoming exams.</span></li>
+      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q14 (2019 Fall)</strong> — Numerical EI with I = bd³/12. Appeared again as Q16 (2021). This sub-type is escalating in frequency. Compute I first, always.</span></li>
+      <li class="mi-item"><span class="mi-bullet">★</span><span class="mi-text"><strong>Q4 and Q7 (2015 Fall + Spring)</strong> — Identical overhang configuration. University reused same problem in same academic year. Very likely template for future overhang questions.</span></li>
+      <li class="mi-item"><span class="mi-bullet">★</span><span class="mi-text"><strong>Q5 (2015 Fall)</strong> — Partial UDL with Macaulay's. Only Macaulay's question in the set — but it contains the extension trick that must be memorized separately.</span></li>
+    </ul>
+  </div>
+
+  <div class="mi-card">
+    <div class="mi-header"><span class="mi-icon">🟡</span><span class="mi-title">High Probability — Likely in Upcoming Exams</span></div>
+    <ul class="mi-list">
+      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Type 5 compound beam with 3 methods</strong> — Q9 (2016) and Q17 (2022) both do this. Alternating pattern suggests this format returns in 2024 Fall or 2025.</span></li>
+      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Numerical EI (Type 3 with given E and dimensions)</strong> — Appeared 2019 and 2021. Very high chance of appearing again. Practice I = bd³/12 computation cold.</span></li>
+      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Type 5 with stepped EI</strong> — Q15 (2020 Fall) combined compound + stepped. This harder hybrid is becoming more common.</span></li>
+      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Proof/derivation of conjugate beam analogy</strong> — Q4 (2015 Fall) asked this directly as theory. If not asked as standalone, it is implied in every numerical.</span></li>
+    </ul>
+  </div>
+
+  <div class="mi-card">
+    <div class="mi-header"><span class="mi-icon">🔵</span><span class="mi-title">Mixed-Concept / Cross-Topic Questions</span></div>
+    <ul class="mi-list">
+      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q13 (2018 Spring)</strong> — Overhang + varying UDL + mid-span deflection. Crosses Type 4 (overhang) with non-standard M/EI shape requiring integration. Hardest Type 4 question.</span></li>
+      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q15 (2020 Fall)</strong> — Compound beam + stepped EI. Crosses Type 5 (compound/hinge) with Type 3 (stepped EI). Both EI scaling and FBD split needed simultaneously.</span></li>
+      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q10 (2017 Fall)</strong> — Overhang + stepped EI + both methods. Crosses Type 3 and Type 4. Verifying same answer by two methods is a skill tested here.</span></li>
+    </ul>
+  </div>
+
+  <div class="mi-card">
+    <div class="mi-header"><span class="mi-icon">⚠️</span><span class="mi-title">Trap Questions — Common Student Mistakes</span></div>
+    <ul class="mi-list">
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Using uniform EI on stepped beam (Type 3):</strong> Divide each span's BM by its OWN local EI — not a single EI. This mistake loses all marks for M/EI diagram.</span></li>
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Conjugate beam support at free end of overhang:</strong> Students wrongly think free end becomes fixed. For overhang free end — it stays free (NOT fixed). Fixed↔Free only applies to cantilever base/tip.</span></li>
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Dropping Macaulay brackets mid-integration:</strong> Rule is absolute — keep ALL bracket terms through both integrations. Only drop (set =0) when substituting the final x value at the very last step.</span></li>
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Setting V'=0 at internal hinge (Type 5):</strong> Moment M' = 0 at hinge (not shear). Shear V' transfers and is definitely NOT zero. This is the most common conceptual error in Type 5.</span></li>
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Unit conversion in numerical EI questions:</strong> E in N/mm² must be converted to kN/m² (×10³). I in mm⁴ must be converted to m⁴ (×10⁻¹²). Forgetting conversion gives EI off by factor of 10⁹.</span></li>
+      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Not converting final deflection to mm:</strong> Q14 and Q16 ask for answer in mm. Deflection from formula is in metres — multiply by 1000. Forgetting this loses the final mark.</span></li>
+    </ul>
+  </div>
+
+  <!-- PRIORITY SUMMARY TABLE -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-text">Priority Study Order</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:2rem">
+    <table class="sum-table">
+      <thead><tr><th>Study Order</th><th>Type</th><th>Pattern</th><th>Questions</th><th>Years</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn first</td>
+          <td style="font-weight:600;color:var(--t1)">Type 1</td>
+          <td style="color:var(--text2)">SSB, uniform EI, double integration</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q3, Q6</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
+          <td><span class="priority-pill" style="background:var(--t1b);color:var(--t1)">Low</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn second</td>
+          <td style="font-weight:600;color:var(--t2)">Type 2</td>
+          <td style="color:var(--text2)">Multiple/partial loads, Macaulay's</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q5</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
+          <td><span class="priority-pill" style="background:var(--t2b);color:var(--t2)">Medium</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn third</td>
+          <td style="font-weight:600;color:var(--t3)">Type 3</td>
+          <td style="color:var(--text2)">Stepped EI, moment area / conjugate</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q3,Q6,Q10,Q14,Q16</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015→2021</td>
+          <td><span class="priority-pill" style="background:var(--t3b);color:var(--t3)">High ★</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn fourth</td>
+          <td style="font-weight:600;color:var(--t4)">Type 4</td>
+          <td style="color:var(--text2)">Overhang beam, free end slope/deflection</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q4,Q7,Q13,Q16</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015→2021</td>
+          <td><span class="priority-pill" style="background:var(--t4b);color:var(--t4)">High ★</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">★ Master this</td>
+          <td style="font-weight:600;color:var(--t5)">Type 5</td>
+          <td style="color:var(--text2)">Compound beam, internal hinge, FBD split</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q1,Q2,Q9,Q11,Q12,Q15,Q17</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2013→2022</td>
+          <td><span class="priority-pill" style="background:var(--t5b);color:var(--t5)">Very High ★★</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">If time allows</td>
+          <td style="font-weight:600;color:var(--t6)">Type 6</td>
+          <td style="color:var(--text2)">Design problem, find w for Δ limit</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q8</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
+          <td><span class="priority-pill" style="background:var(--t6b);color:var(--t6)">Rare</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
