@@ -227,6 +227,302 @@
 
   /* LAYOUT */
   .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BE Civil — Study Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --bg2: #141416;
+    --bg3: #1c1c20;
+    --border: #2a2a30;
+    --text: #e8e8ec;
+    --muted: #6b6b7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+  .topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 16px; position: sticky; top: 0; z-index: 100; }
+  .topbar h1 { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.05em; }
+  .topbar p { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+  .jump-nav { padding: 12px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .jump-nav::-webkit-scrollbar { display: none; }
+  .jump-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-right: 8px; letter-spacing: 0.1em; }
+  .jump-btn { display: inline-block; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; cursor: pointer; margin-right: 6px; border: 1px solid; transition: opacity 0.15s; text-decoration: none; }
+  .jump-btn:hover { opacity: 0.75; }
+  .main { padding: 16px; max-width: 480px; margin: 0 auto; }
+  .year-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin: 20px 0 8px; padding-left: 2px; }
+  .sem-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .sem-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .sem-header:active { background: var(--bg3); }
+  .sem-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 5px; border: 1px solid; flex-shrink: 0; }
+  .sem-title { flex: 1; font-size: 14px; font-weight: 600; }
+  .sem-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-right: 4px; }
+  .chevron { font-size: 18px; color: var(--muted); transition: transform 0.2s; display: inline-block; }
+  .chevron.open { transform: rotate(180deg); }
+  .subjects { display: none; border-top: 1px solid var(--border); }
+  .subjects.open { display: block; }
+  .type-nav { padding: 10px 12px 8px; display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); align-items: center; }
+  .type-nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; margin-right: 2px; }
+  .type-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .sub-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.12s; }
+  .sub-row:last-child { border-bottom: none; }
+  .sub-row:active { background: var(--bg3); }
+  .sub-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); width: 18px; flex-shrink: 0; }
+  .sub-name { flex: 1; font-size: 13px; color: var(--text); }
+  .sub-code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+  .sub-arrow { font-size: 14px; color: var(--muted); flex-shrink: 0; }
+  .add-mat { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; border-top: 1px dashed var(--border); }
+  .add-mat:hover { color: var(--text); }
+  .add-mat span { font-size: 16px; }
+  .footer { text-align: center; padding: 24px 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>⚙ BE CIVIL — STUDY HUB</h1>
+  <p>// Pokhara University · Faculty of Science & Technology</p>
+</div>
+
+<div class="jump-nav">
+  <span class="jump-label">JUMP →</span>
+  <a class="jump-btn" href="#sem1" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">SEM 1</a>
+  <a class="jump-btn" href="#sem2" style="color:#22c55e;border-color:#14372a;background:#0a1f17">SEM 2</a>
+  <a class="jump-btn" href="#sem3" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">SEM 3</a>
+  <a class="jump-btn" href="#sem4" style="color:#f97316;border-color:#3d2008;background:#221205">SEM 4</a>
+  <a class="jump-btn" href="#sem5" style="color:#ec4899;border-color:#3d1228;background:#220a17">SEM 5</a>
+  <a class="jump-btn" href="#sem6" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">SEM 6</a>
+  <a class="jump-btn" href="#sem7" style="color:#eab308;border-color:#3a2e06;background:#201a04">SEM 7</a>
+  <a class="jump-btn" href="#sem8" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">SEM 8</a>
+</div>
+
+<div class="main">
+
+  <div class="year-label">── Year 1 ──────────────────</div>
+
+  <div class="sem-card" id="sem1">
+    <div class="sem-header" onclick="toggle('body1')">
+      <span class="sem-badge" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">SEM 1</span>
+      <span class="sem-title">Semester I</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body1">▾</span>
+    </div>
+    <div class="subjects" id="body1">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Math</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Physics</span>
+        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Drawing</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Lab</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics I</span><span class="sub-code">SH 101</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Engineering Physics</span><span class="sub-code">SH 102</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Engineering Chemistry</span><span class="sub-code">SH 103</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Engineering Drawing I</span><span class="sub-code">CE 101</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Workshop Technology</span><span class="sub-code">CE 102</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Computer Programming</span><span class="sub-code">SH 104</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="sem-card" id="sem2">
+    <div class="sem-header" onclick="toggle('body2')">
+      <span class="sem-badge" style="color:#22c55e;border-color:#14372a;background:#0a1f17">SEM 2</span>
+      <span class="sem-title">Semester II</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body2">▾</span>
+    </div>
+    <div class="subjects" id="body2">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Math</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Mechanics</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Materials</span>
+        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Drawing</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics II</span><span class="sub-code">SH 151</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Applied Mechanics</span><span class="sub-code">SH 152</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Engineering Drawing II</span><span class="sub-code">CE 151</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Basic Electronics</span><span class="sub-code">CE 152</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Civil Engineering Materials</span><span class="sub-code">CE 153</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Communication Skills</span><span class="sub-code">SH 153</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="year-label">── Year 2 ──────────────────</div>
+
+  <div class="sem-card" id="sem3">
+    <div class="sem-header" onclick="toggle('body3')">
+      <span class="sem-badge" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">SEM 3</span>
+      <span class="sem-title">Semester III</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body3">▾</span>
+    </div>
+    <div class="subjects" id="body3">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Structures</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Fluid</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Survey</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Geo</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics III</span><span class="sub-code">SH 201</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Strength of Materials</span><span class="sub-code">CE 201</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Fluid Mechanics</span><span class="sub-code">WRE 212</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Surveying I</span><span class="sub-code">CE 203</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Geology for Engineers</span><span class="sub-code">CE 204</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Theory of Structures I</span><span class="sub-code">CE 205</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="sem-card" id="sem4">
+    <div class="sem-header" onclick="toggle('body4')">
+      <span class="sem-badge" style="color:#f97316;border-color:#3d2008;background:#221205">SEM 4</span>
+      <span class="sem-title">Semester IV</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body4">▾</span>
+    </div>
+    <div class="subjects" id="body4">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Geotech</span>
+        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Structures</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Hydraulics</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Survey</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics IV</span><span class="sub-code">CE 251</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Surveying II</span><span class="sub-code">CE 252</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Theory of Structures II</span><span class="sub-code">CE 253</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Concrete Technology</span><span class="sub-code">CE 254</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Geotechnical Engineering</span><span class="sub-code">CE 255</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Hydraulics</span><span class="sub-code">CE 256</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="year-label">── Year 3 ──────────────────</div>
+
+  <div class="sem-card" id="sem5">
+    <div class="sem-header" onclick="toggle('body5')">
+      <span class="sem-badge" style="color:#ec4899;border-color:#3d1228;background:#220a17">SEM 5</span>
+      <span class="sem-title">Semester V</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body5">▾</span>
+    </div>
+    <div class="subjects" id="body5">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#ec4899;border-color:#3d1228;background:#220a17">Design</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Transport</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Water</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Foundation</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Structural Analysis</span><span class="sub-code">CE 301</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Design of Steel Structures</span><span class="sub-code">CE 302</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Transportation Engineering I</span><span class="sub-code">CE 303</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Foundation Engineering</span><span class="sub-code">CE 304</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Water Supply Engineering</span><span class="sub-code">CE 305</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Estimating & Costing</span><span class="sub-code">CE 306</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="sem-card" id="sem6">
+    <div class="sem-header" onclick="toggle('body6')">
+      <span class="sem-badge" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">SEM 6</span>
+      <span class="sem-title">Semester VI</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body6">▾</span>
+    </div>
+    <div class="subjects" id="body6">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">RCC</span>
+        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Transport</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Irrigation</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Hydro</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Design of RCC Structures</span><span class="sub-code">CE 351</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Transportation Engineering II</span><span class="sub-code">CE 352</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Irrigation Engineering</span><span class="sub-code">CE 353</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Sanitation Engineering</span><span class="sub-code">CE 354</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Construction Management</span><span class="sub-code">CE 355</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Hydrology</span><span class="sub-code">CE 356</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="year-label">── Year 4 ──────────────────</div>
+
+  <div class="sem-card" id="sem7">
+    <div class="sem-header" onclick="toggle('body7')">
+      <span class="sem-badge" style="color:#eab308;border-color:#3a2e06;background:#201a04">SEM 7</span>
+      <span class="sem-title">Semester VII</span>
+      <span class="sem-meta">6 subjects</span>
+      <span class="chevron" id="chev-body7">▾</span>
+    </div>
+    <div class="subjects" id="body7">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#eab308;border-color:#3a2e06;background:#201a04">Hydro</span>
+        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Environ</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Geotech</span>
+        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">GIS</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Hydropower Engineering</span><span class="sub-code">WRE 410</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Environmental Engineering</span><span class="sub-code">CE 402</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Ground Improvement Techniques</span><span class="sub-code">CE 403</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Remote Sensing & GIS</span><span class="sub-code">CE 404</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Engineering Economics</span><span class="sub-code">CE 405</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Elective I</span><span class="sub-code">CE 406</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="sem-card" id="sem8">
+    <div class="sem-header" onclick="toggle('body8')">
+      <span class="sem-badge" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">SEM 8</span>
+      <span class="sem-title">Semester VIII</span>
+      <span class="sem-meta">5 subjects</span>
+      <span class="chevron" id="chev-body8">▾</span>
+    </div>
+    <div class="subjects" id="body8">
+      <div class="type-nav">
+        <span class="type-nav-label">TOPICS →</span>
+        <span class="type-tag" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">Project</span>
+        <span class="type-tag" style="color:#ec4899;border-color:#3d1228;background:#220a17">Elective</span>
+        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Field</span>
+      </div>
+      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Project Work / Thesis</span><span class="sub-code">CE 451</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Professional Practice</span><span class="sub-code">CE 452</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Elective II</span><span class="sub-code">CE 453</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Elective III</span><span class="sub-code">CE 454</span><span class="sub-arrow">›</span></div>
+      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Internship / Field Work</span><span class="sub-code">CE 455</span><span class="sub-arrow">›</span></div>
+      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+  </div>
+
+  <div class="footer">// BE Civil · Pokhara University · 8 Semesters · 47 Subjects</div>
+
+</div>
+
+<script>
+function toggle(id) {
+  const body = document.getElementById(id);
+  const chev = document.getElementById('chev-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
 
   /* TOPIC FILTER BOX */
   .topic-box {
