@@ -1,1782 +1,564 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Professional Portfolio</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-   
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tek Raj Joshi — Civil Engineer, Entrepreneur & Researcher from Nepal.">
+<title>Tek Raj Joshi | Portfolio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  @property --angle{syntax:'<angle>';inherits:false;initial-value:0deg;}
+
+  :root{
+    --bg:#0a0e14;
+    --surface:#111823;
+    --surface-2:#161f2c;
+    --line:#1f2b3a;
+    --text:#e7edf4;
+    --muted:#8695a7;
+    --cyan:#38d3f5;
+    --cyan-dim:#1b7f96;
+    --amber:#f5a524;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  section{padding:100px 8vw;max-width:1200px;margin:0 auto;position:relative;}
+  ::selection{background:var(--cyan);color:#00131a;}
+
+  .icon{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-0.15em;}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+
+  .grad-text{background:linear-gradient(90deg,var(--cyan),var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:gradShift 6s ease infinite;}
+  @keyframes gradShift{0%,100%{background-position:0% center;}50%{background-position:100% center;}}
+
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan-dim),var(--amber));border-radius:10px;}
+
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.35;}
+  .orb-cyan{width:380px;height:380px;background:var(--cyan);top:-100px;right:-80px;animation:floatY 9s ease-in-out infinite;}
+  .orb-amber{width:300px;height:300px;background:var(--amber);bottom:-60px;left:-80px;opacity:0.18;animation:floatY 11s ease-in-out infinite reverse;}
+  @keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-30px);}}
+
+  .glow-card{transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;}
+  .glow-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(56,211,245,0.15);}
+
+  /* animated conic-gradient glowing border */
+  .glow-border{position:relative;z-index:0;}
+  .glow-border::before{
+    content:"";position:absolute;inset:-2px;border-radius:inherit;padding:2px;z-index:-1;
+    background:conic-gradient(from var(--angle), var(--cyan), var(--amber), var(--cyan));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+    animation:rotateBorder 5s linear infinite;
+  }
+  @keyframes rotateBorder{to{--angle:360deg;}}
+  .glow-border-hover::before{animation-play-state:paused;opacity:0;transition:opacity .3s ease;}
+  .glow-border-hover:hover::before{animation-play-state:running;opacity:1;}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 8vw;background:rgba(10,14,20,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .nav-logo{font-family:var(--font-display);font-weight:700;font-size:1.3rem;color:var(--text);}
+  .nav-logo span{color:var(--cyan);}
+  .nav-links{display:flex;gap:30px;align-items:center;}
+  .nav-links a{font-family:var(--font-mono);font-size:0.85rem;color:var(--muted);letter-spacing:0.02em;transition:color .2s;position:relative;}
+  .nav-links a:not(.nav-cta)::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--cyan);transition:width .25s ease;}
+  .nav-links a:not(.nav-cta):hover::after, .nav-links a.active::after{width:100%;}
+  .nav-links a:hover, .nav-links a.active{color:var(--cyan);}
+  .nav-cta{border:1px solid var(--cyan-dim);padding:8px 16px;border-radius:4px;color:var(--cyan) !important;}
+  .nav-cta:hover{background:var(--cyan);color:#00131a !important;}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+  .hamburger span{width:24px;height:2px;background:var(--text);}
+
+  @media(max-width:860px){
+    .nav-links{position:fixed;top:0;right:-100%;width:70%;height:100vh;background:var(--surface);flex-direction:column;justify-content:center;transition:right .3s ease;border-left:1px solid var(--line);}
+    .nav-links.open{right:0;}
+    .hamburger{display:flex;z-index:110;}
+  }
+
+  /* ---------- hero ---------- */
+  #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:100px;position:relative;overflow:hidden;
+    background-image:linear-gradient(rgba(56,211,245,0.05) 1px, transparent 1px),linear-gradient(90deg, rgba(56,211,245,0.05) 1px, transparent 1px);
+    background-size:40px 40px;}
+  #hero > *:not(.orb){position:relative;z-index:1;}
+  .hero-inner{display:grid;grid-template-columns:1.1fr 0.9fr;gap:60px;align-items:center;}
+  .hero-eyebrow{font-family:var(--font-mono);color:var(--amber);font-size:0.85rem;letter-spacing:0.08em;margin-bottom:18px;text-transform:uppercase;}
+  .hero-name{font-family:var(--font-display);font-size:clamp(2.6rem,6vw,4.6rem);font-weight:700;line-height:1.05;margin-bottom:20px;}
+  .hero-name-accent{color:var(--cyan);text-shadow:0 0 30px rgba(56,211,245,0.35);}
+  .hero-motto{font-size:1.15rem;color:var(--text);margin-bottom:12px;font-weight:500;}
+  .hero-tagline{color:var(--muted);max-width:480px;margin-bottom:34px;}
+  .hero-ranks{display:flex;gap:16px;flex-wrap:wrap;}
+  .rank-badge{border:1px solid var(--line);background:var(--surface);padding:10px 16px;border-radius:6px;display:flex;flex-direction:column;gap:2px;border-left:3px solid var(--amber);transition:transform .25s ease, box-shadow .25s ease;}
+  .rank-badge:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(245,165,36,0.15);}
+  .rank-num{font-family:var(--font-mono);color:var(--amber);font-weight:600;}
+  .rank-label{font-size:0.75rem;color:var(--muted);}
+
+  .terminal{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4), 0 0 60px rgba(56,211,245,0.06);position:relative;z-index:1;}
+  .terminal-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);}
+  .t-dot{width:11px;height:11px;border-radius:50%;}
+  .t-red{background:#f2555a;}.t-yellow{background:#f5c542;}.t-green{background:#3ecf6e;}
+  .t-title{margin-left:10px;font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);}
+  .terminal-body{padding:20px;font-family:var(--font-mono);font-size:0.85rem;}
+  .t-line{display:block;margin-bottom:6px;}
+  .t-prompt{color:var(--cyan);}
+  .t-key{color:var(--muted);}
+  .t-val{color:var(--text);}
+  .t-cursor{display:inline-block;width:8px;height:16px;background:var(--cyan);animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .hero-scroll-indicator{text-align:center;margin-top:60px;font-family:var(--font-mono);font-size:0.75rem;color:var(--muted);}
+  .scroll-line{width:1px;height:40px;background:linear-gradient(var(--cyan),transparent);margin:0 auto 10px;}
+
+  /* ---------- section labels ---------- */
+  .section-label{font-family:var(--font-mono);color:var(--cyan);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+  .section-label::before{content:"// ";color:var(--amber);}
+  .section-title{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;margin-bottom:20px;}
+  .section-sub{color:var(--muted);max-width:600px;margin-bottom:50px;}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid;grid-template-columns:0.8fr 1.2fr;gap:60px;align-items:center;}
+  .about-img-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/5;background:var(--surface);position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.5);}
+  .about-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+  .about-img-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(10,14,20,0.55));pointer-events:none;}
+  .about-bio{color:var(--muted);margin-bottom:34px;}
+
+  .interest-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:28px;perspective:900px;}
+  .interest-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transform-style:preserve-3d;transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;cursor:default;}
+  .interest-card:hover{transform:rotateX(10deg) rotateY(-10deg) translateY(-6px) scale(1.05);box-shadow:0 16px 32px rgba(56,211,245,0.18);border-color:var(--cyan-dim);}
+  .interest-icon-lg{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--cyan);font-size:0.95rem;transition:transform .35s ease;}
+  .interest-card:hover .interest-icon-lg{transform:translateZ(18px) scale(1.08);color:var(--amber);}
+  .interest-label{font-family:var(--font-display);font-weight:600;font-size:0.72rem;line-height:1.2;}
+
+  .social-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px;}
+  .social-badge{width:42px;height:42px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text);transition:all .25s ease;position:relative;font-size:1.05rem;}
+  .social-badge .icon{width:1.05em;height:1.05em;}
+  .social-badge:hover{transform:translateY(-4px) scale(1.08);color:#00131a;background:var(--cyan);box-shadow:0 10px 24px rgba(56,211,245,0.4);}
+
+  .about-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn-fill{display:flex;align-items:center;gap:8px;padding:13px 26px;border-radius:30px;background:var(--cyan);color:#00131a;font-family:var(--font-mono);font-size:0.85rem;font-weight:600;transition:opacity .2s, transform .2s, box-shadow .2s;box-shadow:0 0 24px rgba(56,211,245,0.25);}
+  .btn-fill:hover{opacity:0.9;transform:translateY(-3px);box-shadow:0 10px 30px rgba(56,211,245,0.4);}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;padding-left:34px;}
+  .timeline-track{position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:repeating-linear-gradient(var(--line) 0 6px, transparent 6px 12px);}
+  .timeline-progress{position:absolute;left:9px;top:6px;width:2px;height:0%;overflow:hidden;box-shadow:0 0 14px rgba(56,211,245,0.55);transition:height .15s linear;}
+  .timeline-progress::before{content:"";position:absolute;left:0;top:0;width:100%;height:200%;background:repeating-linear-gradient(var(--cyan) 0 6px, transparent 6px 12px);animation:flowDash 1.1s linear infinite;}
+  @keyframes flowDash{from{transform:translateY(-50%);}to{transform:translateY(0%);}}
+  .timeline-glow-dot{position:absolute;left:10px;top:0%;width:14px;height:14px;border-radius:50%;background:var(--cyan);transform:translate(-50%,-50%);transition:top .15s linear;animation:pulseDot 1.6s ease-in-out infinite;z-index:2;}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 10px 3px rgba(56,211,245,0.5);}50%{box-shadow:0 0 22px 8px rgba(56,211,245,0.9);}}
+  .tl-item{position:relative;margin-bottom:40px;}
+  .tl-item::before{content:"";position:absolute;left:-30px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--cyan);z-index:1;}
+  .tl-tag{font-family:var(--font-mono);color:var(--amber);font-size:0.78rem;margin-bottom:6px;display:block;}
+  .tl-title{font-family:var(--font-display);font-size:1.2rem;font-weight:600;margin-bottom:4px;}
+  .tl-place{color:var(--muted);font-size:0.9rem;}
+
+  /* ---------- research ---------- */
+  .research-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:26px 28px;margin-bottom:22px;transition:border-color .2s;}
+  .research-card:hover{border-color:var(--cyan-dim);}
+  .research-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .research-head .icon{color:var(--cyan);font-size:1.2rem;}
+  .research-title{font-family:var(--font-display);font-weight:600;font-size:1.05rem;}
+  .research-sub{font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);margin-bottom:14px;}
+  .research-body{color:var(--muted);font-size:0.92rem;margin-bottom:16px;}
+  .research-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .research-tag{font-family:var(--font-mono);font-size:0.72rem;padding:4px 10px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);color:var(--cyan);}
+  .research-link{font-family:var(--font-mono);font-size:0.82rem;color:var(--amber);display:inline-flex;align-items:center;gap:6px;}
+  .research-link:hover{text-decoration:underline;}
+
+  /* ---------- skills ---------- */
+  .prof-bars{display:flex;flex-direction:column;gap:18px;margin-bottom:50px;}
+  .prof-row{display:grid;grid-template-columns:140px 1fr 50px;align-items:center;gap:14px;}
+  .prof-name{font-family:var(--font-mono);font-size:0.85rem;}
+  .prof-track{height:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .prof-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));border-radius:6px;box-shadow:0 0 12px rgba(56,211,245,0.5);transition:width 1.2s cubic-bezier(.2,.8,.2,1);}
+  .prof-pct{font-family:var(--font-mono);font-size:0.8rem;color:var(--amber);text-align:right;}
+
+  .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
+  .skill-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;}
+  .skill-card-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .skill-card-head .icon{color:var(--cyan);font-size:1.2rem;}
+  .skill-card-head h3{font-family:var(--font-display);font-size:1rem;font-weight:600;}
+  .skill-tags{display:flex;flex-wrap:wrap;gap:8px;}
+  .skill-tag{font-family:var(--font-mono);font-size:0.78rem;padding:5px 10px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);}
+
+  /* ---------- projects ---------- */
+  .filter-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px;}
+  .filter-btn{font-family:var(--font-mono);font-size:0.8rem;padding:8px 18px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s;}
+  .filter-btn.active, .filter-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
+  .placeholder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
+  .placeholder-card{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:30px;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;transition:border-color .2s;}
+  .placeholder-card:hover{border-color:var(--cyan-dim);}
+  .placeholder-card .icon{color:var(--amber);font-size:1.4rem;}
+  .placeholder-title{font-family:var(--font-display);font-weight:600;color:var(--muted);}
+  .placeholder-cat{font-family:var(--font-mono);font-size:0.72rem;color:var(--cyan);}
+
+  /* ---------- contact ---------- */
+  .contact-channels{display:flex;flex-direction:column;gap:16px;margin-top:30px;}
+  .contact-channel{display:flex;align-items:center;gap:16px;padding:14px 18px;border:1px solid var(--line);border-radius:8px;background:var(--surface);transition:border-color .2s, transform .2s;}
+  .contact-channel:hover{border-color:var(--cyan-dim);transform:translateX(4px);}
+  .ch-icon{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--cyan);font-size:1.1rem;}
+  .ch-label{font-size:0.75rem;color:var(--muted);}
+  .ch-value{font-family:var(--font-mono);font-size:0.95rem;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:30px 8vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);}
+  .footer-social{display:flex;gap:14px;}
+
+  @media(max-width:860px){
+    .hero-inner, .about-grid{grid-template-columns:1fr;}
+    .prof-row{grid-template-columns:100px 1fr 40px;}
+    .interest-grid{grid-template-columns:repeat(3,1fr);}
+    section{padding:70px 6vw;}
+  }
+</style>
 </head>
 <body>
-  
- <!-- Header with Logo and Navigation -->
-  <header>
-    <a href="#" class="logo">
-      <i class="fas fa-code logo-icon"></i>
-      <span class="logo-text">TEK RAJ JOSHI</span>
-    </a>
-    
-    <nav>
-      <div class="menu-toggle">
-        <i class="fas fa-bars"></i>
-      </div>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
-  <!-- Hero Section -->
-  <section class="hero" id="home">
-    <div class="content">
-      <h1>TEK R JOSHI</h1>
-      <h2>HELLO ! <span class="typing-text">CIVIL ENGINEER</span></h2>
-      <p>
-     Civil Sub-Engineer from Nepal with 3+ years of experience in design, estimation,
-        construction, and project supervision. Currently pursuing a Bachelor's degree in 
-        Civil Engineering and passionate about delivering safe, efficient, 
-        and sustainable infrastructure solutions.
 
-       
+<!-- ============ ICON SPRITE (inline, no external dependency) ============ -->
+<svg style="display:none">
+  <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="4.3" r="1.5"/><path d="M12 6 7 20M12 6l5 14M8.7 15h6.6"/></symbol>
+  <symbol id="ic-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
+  <symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20V14M3 20h18"/></symbol>
+  <symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18c-3-3-3-15 0-18"/></symbol>
+  <symbol id="ic-plane" viewBox="0 0 24 24"><path d="M3 11.5 21 3l-8.5 18-2-8-8-1.5z"/></symbol>
+  <symbol id="ic-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M5 5h6v0H5v14h14v-6"/></symbol>
+  <symbol id="ic-building" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></symbol>
+  <symbol id="ic-toolbox" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="1"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></symbol>
+  <symbol id="ic-diagram" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7.7 7.2 11 16M16.3 7.2 13 16M8 6h8"/></symbol>
+  <symbol id="ic-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></symbol>
+  <symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+  <symbol id="ic-code" viewBox="0 0 24 24"><path d="M9 18 3 12l6-6M15 6l6 6-6 6"/></symbol>
+  <symbol id="ic-github" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="ic-linkedin" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.065 2.065 0 1 1 0-4.13 2.065 2.065 0 0 1 0 4.13zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol>
+  <symbol id="ic-facebook" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 3.28 3.28 0 0 0-1.145.156c-.294.108-.556.288-.762.526-.315.395-.523 1.06-.523 2.048v1.24h3.026l-.402 3.667h-2.624v7.98H9.101z"/></symbol>
+  <symbol id="ic-twitter" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
+  <symbol id="ic-instagram" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 0C8.74 0 8.333.014 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.014 8.333 0 8.74 0 12s.014 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.986 8.74 24 12 24s3.667-.014 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.058-1.28.072-1.687.072-4.947s-.014-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.014 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227a3.81 3.81 0 0 1-.9 1.382 3.744 3.744 0 0 1-1.38.896c-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421a3.716 3.716 0 0 1-1.379-.9 3.644 3.644 0 0 1-.9-1.38c-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.68a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.846-10.405a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></symbol>
+</svg>
+
+<nav>
+  <a href="#hero" class="nav-logo">T.R<span>.</span>Joshi</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" class="active">About</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section id="hero">
+  <div class="orb orb-cyan"></div>
+  <div class="orb orb-amber"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Civil Engineer · Entrepreneur · Researcher</div>
+      <h1 class="hero-name">Tek Raj<br><span class="hero-name-accent">Joshi</span></h1>
+      <p class="hero-motto">Engineer by profession. Aspiring entrepreneur. Leader by choice.</p>
+      <p class="hero-tagline">Building structures that stand, and ideas that scale — one project, one venture at a time.</p>
+      <div class="hero-ranks">
+        <div class="rank-badge"><span class="rank-num">CTEVT</span><span class="rank-label">Diploma Civil</span></div>
+        <div class="rank-badge"><span class="rank-num">Er.</span><span class="rank-label">Civil Engineering</span></div>
+        <div class="rank-badge"><span class="rank-num">2026</span><span class="rank-label">Currently Learning</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="terminal glow-border">
+        <div class="terminal-bar">
+          <span class="t-dot t-red"></span><span class="t-dot t-yellow"></span><span class="t-dot t-green"></span>
+          <span class="t-title">tek@portfolio ~</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-prompt">$ </span>tek --whoami</span>
+          <span class="t-line"><span class="t-key">Name       </span><span class="t-val">: Tek Raj Joshi</span></span>
+          <span class="t-line"><span class="t-key">Field      </span><span class="t-val">: Er. Civil Engineering</span></span>
+          <span class="t-line"><span class="t-key">University </span><span class="t-val">: Pokhara University</span></span>
+          <span class="t-line"><span class="t-key">Origin     </span><span class="t-val">: Sudurpashchim, Nepal</span></span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-prompt">$ </span>tek --skills</span>
+          <span class="t-line"><span class="t-key">Software   </span><span class="t-val">: ETABS | Civil 3D | AutoCAD | Revit | MS Office</span></span>
+          <span class="t-line"><span class="t-key">Interests  </span><span class="t-val">: Structural Engg, Construction Mgmt, Infra Dev</span></span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-prompt">$ </span><span class="t-cursor"></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator"><div class="scroll-line"></div>Scroll to explore</div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal glow-border">
+      <img src="tek-photo.jpg" alt="Tek Raj Joshi">
+    </div>
+    <div class="reveal">
+      <div class="section-label">A Little About Me</div>
+      <h2 class="section-title">The Person<br><span class="grad-text">Behind the Work.</span></h2>
+      <p class="about-bio">
+        I am a Civil Engineer with a Diploma in Civil Engineering and a Bachelor's degree in Civil Engineering from Pokhara University. My interests lie in structural engineering, construction technology, and digital engineering tools. Beyond engineering, I enjoy exploring AI, IT, economics, and entrepreneurship. I believe in continuous learning and enjoy applying technology to solve real-world engineering challenges.
       </p>
 
-      <div class="cta-buttons">
-        <a href="#projects" class="btn btn-primary">
-          <i class="fas fa-code"></i> View Projects
-        </a>
-        <a href="#contact" class="btn btn-secondary">
-          <i class="fas fa-paper-plane"></i> Contact Me
-        </a>
+      <div class="interest-grid">
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-compass"/></svg></div><span class="interest-label">Engineering</span></div>
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-chip"/></svg></div><span class="interest-label">AI & Tech</span></div>
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-bulb"/></svg></div><span class="interest-label">Entrepreneurship</span></div>
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-chart"/></svg></div><span class="interest-label">Economics</span></div>
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-globe"/></svg></div><span class="interest-label">Geopolitics</span></div>
+        <div class="interest-card"><div class="interest-icon-lg"><svg class="icon"><use href="#ic-plane"/></svg></div><span class="interest-label">Travel</span></div>
       </div>
 
-      <div class="social-icons">
-       <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-github"></i>
-</a>
+      <div class="social-row">
+        <a href="#" class="social-badge glow-border" title="Add your GitHub link"><svg class="icon"><use href="#ic-github"/></svg></a>
+        <a href="https://www.linkedin.com/in/tekrajjoshi1/" class="social-badge glow-border" title="LinkedIn"><svg class="icon"><use href="#ic-linkedin"/></svg></a>
+        <a href="#" class="social-badge glow-border" title="Add your Facebook link"><svg class="icon"><use href="#ic-facebook"/></svg></a>
+        <a href="#" class="social-badge glow-border" title="Add your Twitter/X link"><svg class="icon"><use href="#ic-twitter"/></svg></a>
+        <a href="#" class="social-badge glow-border" title="Add your Instagram link"><svg class="icon"><use href="#ic-instagram"/></svg></a>
+      </div>
 
-<a href="https://www.linkedin.com/in/tasdfhjd/" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-linkedin-in"></i>
-</a>
-
-<a href="https://twitter.com/tekrajjoshii" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-twitter"></i>
-</a>
-
-          <a href="https://www.instagram.com/afdgsag3" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
-    <i class="fab fa-instagram"></i>
-            
-<a href="https://dribbble.com/jhagjd" target="_blank" rel="noopener noreferrer">
-  <i class="fab fa-dribbble"></i>
-</a>
-       
+      <div class="about-actions">
+        <a href="#" class="btn-fill"><svg class="icon"><use href="#ic-download"/></svg> Download CV</a>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="profile-container">
-      <div class="border-outer"></div>
-      <div class="border-middle"></div>
-      <div class="border-inner"></div>
-      <div class="border-container"></div>
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring"></div>
-      <img src="profile.jpg" alt="Joshi Profile Picture" class="profile-img" />
+<!-- ================= EDUCATION TIMELINE ================= -->
+<section id="timeline">
+  <div class="section-label reveal">Journey So Far</div>
+  <h2 class="section-title reveal">Education <span class="grad-text">Timeline.</span></h2>
+  <p class="section-sub reveal">Every certificate is a step — here's the path that got me here.</p>
 
+  <div class="timeline">
+    <div class="timeline-track"></div>
+    <div class="timeline-progress" id="tlProgress"></div>
+    <div class="timeline-glow-dot" id="tlDot"></div>
+    <div class="tl-item reveal">
+      <span class="tl-tag">SLC</span>
+      <div class="tl-title">School Leaving Certificate</div>
+      <div class="tl-place">Galainath Higher Secondary School</div>
     </div>
-  </section>
-
-
-  <script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exam Pattern Intelligence System — Slope & Deflection of Beams</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-
-  :root {
-    --bg: #0f0f0f;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --surface3: #252525;
-    --border: #2a2a2a;
-    --border2: #333;
-    --text: #e8e8e8;
-    --text2: #a0a0a0;
-    --text3: #666;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-
-    --t1: #a78bfa; --t1bg: #1a1530; --t1b: #3d2f7a;
-    --t2: #34d399; --t2bg: #0d2218; --t2b: #1a4535;
-    --t3: #fb923c; --t3bg: #201508; --t3b: #5c2d0a;
-    --t4: #60a5fa; --t4bg: #0d1a2e; --t4b: #1a3a6a;
-    --t5: #f87171; --t5bg: #200d0d; --t5b: #5c1a1a;
-    --t6: #facc15; --t6bg: #1c1700; --t6b: #4a3d00;
-    --th: #e879f9; --thbg: #1e0a20; --thb: #5c1a66;
-    --mi: #2dd4bf; --mibg: #081a18; --mib: #1a4a44;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    font-size: 14px;
-  }
-
-  /* HEADER */
-  .site-header {
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 2rem 2rem;
-    background: var(--surface);
-    position: relative;
-    overflow: hidden;
-  }
-  .site-header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .15em;
-    color: var(--text3);
-    text-transform: uppercase;
-    margin-bottom: .5rem;
-  }
-  .header-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: .4rem;
-    letter-spacing: -.01em;
-  }
-  .header-sub {
-    font-size: 13px;
-    color: var(--text2);
-  }
-  .header-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 1.2rem;
-  }
-  .meta-chip {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    background: var(--surface2);
-  }
-  .meta-chip.hot { border-color: var(--t5b); color: var(--t5); background: var(--t5bg); }
-
-  /* NAV */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(15,15,15,0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-    padding: .6rem 2rem;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .nav-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    margin-right: 4px;
-  }
-  .nav-btn {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid var(--border2);
-    background: transparent;
-    color: var(--text2);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all .15s;
-  }
-  .nav-btn:hover { background: var(--surface2); color: var(--text); }
-
-  /* LAYOUT */
-  .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BE Civil — Study Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d0d0f;
-    --bg2: #141416;
-    --bg3: #1c1c20;
-    --border: #2a2a30;
-    --text: #e8e8ec;
-    --muted: #6b6b7a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
-  .topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 16px; position: sticky; top: 0; z-index: 100; }
-  .topbar h1 { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.05em; }
-  .topbar p { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
-  .jump-nav { padding: 12px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-  .jump-nav::-webkit-scrollbar { display: none; }
-  .jump-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-right: 8px; letter-spacing: 0.1em; }
-  .jump-btn { display: inline-block; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; cursor: pointer; margin-right: 6px; border: 1px solid; transition: opacity 0.15s; text-decoration: none; }
-  .jump-btn:hover { opacity: 0.75; }
-  .main { padding: 16px; max-width: 480px; margin: 0 auto; }
-  .year-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin: 20px 0 8px; padding-left: 2px; }
-  .sem-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
-  .sem-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .sem-header:active { background: var(--bg3); }
-  .sem-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 5px; border: 1px solid; flex-shrink: 0; }
-  .sem-title { flex: 1; font-size: 14px; font-weight: 600; }
-  .sem-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-right: 4px; }
-  .chevron { font-size: 18px; color: var(--muted); transition: transform 0.2s; display: inline-block; }
-  .chevron.open { transform: rotate(180deg); }
-  .subjects { display: none; border-top: 1px solid var(--border); }
-  .subjects.open { display: block; }
-  .type-nav { padding: 10px 12px 8px; display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); align-items: center; }
-  .type-nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; margin-right: 2px; }
-  .type-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .sub-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.12s; }
-  .sub-row:last-child { border-bottom: none; }
-  .sub-row:active { background: var(--bg3); }
-  .sub-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); width: 18px; flex-shrink: 0; }
-  .sub-name { flex: 1; font-size: 13px; color: var(--text); }
-  .sub-code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
-  .sub-arrow { font-size: 14px; color: var(--muted); flex-shrink: 0; }
-  .add-mat { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; border-top: 1px dashed var(--border); }
-  .add-mat:hover { color: var(--text); }
-  .add-mat span { font-size: 16px; }
-  .footer { text-align: center; padding: 24px 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
-</style>
-</head>
-<body>
-
-<div class="topbar">
-  <h1>⚙ BE CIVIL — STUDY HUB</h1>
-  <p>// Pokhara University · Faculty of Science & Technology</p>
-</div>
-
-<div class="jump-nav">
-  <span class="jump-label">JUMP →</span>
-  <a class="jump-btn" href="#sem1" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">SEM 1</a>
-  <a class="jump-btn" href="#sem2" style="color:#22c55e;border-color:#14372a;background:#0a1f17">SEM 2</a>
-  <a class="jump-btn" href="#sem3" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">SEM 3</a>
-  <a class="jump-btn" href="#sem4" style="color:#f97316;border-color:#3d2008;background:#221205">SEM 4</a>
-  <a class="jump-btn" href="#sem5" style="color:#ec4899;border-color:#3d1228;background:#220a17">SEM 5</a>
-  <a class="jump-btn" href="#sem6" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">SEM 6</a>
-  <a class="jump-btn" href="#sem7" style="color:#eab308;border-color:#3a2e06;background:#201a04">SEM 7</a>
-  <a class="jump-btn" href="#sem8" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">SEM 8</a>
-</div>
-
-<div class="main">
-
-  <div class="year-label">── Year 1 ──────────────────</div>
-
-  <div class="sem-card" id="sem1">
-    <div class="sem-header" onclick="toggle('body1')">
-      <span class="sem-badge" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">SEM 1</span>
-      <span class="sem-title">Semester I</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body1">▾</span>
+    <div class="tl-item reveal">
+      <span class="tl-tag">DIPLOMA · CTEVT</span>
+      <div class="tl-title">Diploma in Civil Engineering</div>
+      <div class="tl-place">Seti Technical School, Doti</div>
     </div>
-    <div class="subjects" id="body1">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Math</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Physics</span>
-        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Drawing</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Lab</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics I</span><span class="sub-code">SH 101</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Engineering Physics</span><span class="sub-code">SH 102</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Engineering Chemistry</span><span class="sub-code">SH 103</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Engineering Drawing I</span><span class="sub-code">CE 101</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Workshop Technology</span><span class="sub-code">CE 102</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Computer Programming</span><span class="sub-code">SH 104</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    <div class="tl-item reveal">
+      <span class="tl-tag">BACHELOR</span>
+      <div class="tl-title">B.E. Civil Engineering</div>
+      <div class="tl-place">Pokhara University — National Academy of Science and Technology, Kailali</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESEARCH ================= -->
+<section id="research">
+  <div class="section-label reveal">Publications & Presentations</div>
+  <h2 class="section-title reveal">Research &<br><span class="grad-text">Field Work.</span></h2>
+  <p class="section-sub reveal">Asking questions that matter for Nepal's infrastructure — conferences, posts, and poster presentations.</p>
+
+  <div class="research-card reveal glow-card">
+    <div class="research-head"><svg class="icon"><use href="#ic-external"/></svg><span class="research-title">Final Year Project — Structural Analysis & Earthquake-Resistant Design of Multi-Storey RC Structure</span></div>
+    <div class="research-sub">LinkedIn Post · Department of Civil Engineering, NAST Dhangadhi (Pokhara University)</div>
+    <p class="research-body">
+      Successfully defended a final year project covering the structural analysis and earthquake-resistant design of a multi-storey RC structure, guided by Er. Hikmat Bdr. Chaudhary and Er. Rajendra Saud. The work spanned the full design cycle — from AutoCAD drafting through to seismic resistance calculations in ETABS.
+    </p>
+    <div class="research-tags">
+      <span class="research-tag">#FinalYearProject</span>
+      <span class="research-tag">#StructuralAnalysis</span>
+      <span class="research-tag">#SeismicDesign</span>
+      <span class="research-tag">#ETABS</span>
+      <span class="research-tag">#NAST</span>
+      <span class="research-tag">#PokharaUniversity</span>
+    </div>
+    <a href="https://www.linkedin.com/posts/tekrajjoshi1_finalyearproject-structuralanalysis-seismicdesign-ugcPost-7461726323468840960-jOxd/" target="_blank" class="research-link"><svg class="icon"><use href="#ic-external"/></svg> View LinkedIn Post</a>
+  </div>
+
+  <div class="research-card reveal glow-card">
+    <div class="research-head"><svg class="icon"><use href="#ic-briefcase"/></svg><span class="research-title">Internship — Water Supply & Sanitation Division Office (WSSDO), Kailali</span></div>
+    <div class="research-sub">Field Internship · Sudurpashchim Province</div>
+    <p class="research-body">
+      Hands-on internship covering BOQ preparation, cost estimation, and site visits, with weekly activity logging as part of the water supply and sanitation program in Kailali.
+    </p>
+    <!-- Replace the href below with your internship completion post once uploaded -->
+    <a href="#" target="_blank" class="research-link"><svg class="icon"><use href="#ic-external"/></svg> View Post (coming soon)</a>
+  </div>
+</section>
+
+<!-- ================= SKILLS ================= -->
+<section id="skills">
+  <div class="section-label reveal">Expertise</div>
+  <h2 class="section-title reveal">Skills &<br><span class="grad-text">Toolbox.</span></h2>
+  <p class="section-sub reveal">Tools I trust. Results I stand behind.</p>
+
+  <div class="prof-bars">
+    <div class="prof-row reveal">
+      <span class="prof-name">ETABS</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="50"></div></div>
+      <span class="prof-pct">50%</span>
+    </div>
+    <div class="prof-row reveal">
+      <span class="prof-name">AutoCAD</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="60"></div></div>
+      <span class="prof-pct">60%</span>
+    </div>
+    <div class="prof-row reveal">
+      <span class="prof-name">MS Office</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="80"></div></div>
+      <span class="prof-pct">80%</span>
     </div>
   </div>
 
-  <div class="sem-card" id="sem2">
-    <div class="sem-header" onclick="toggle('body2')">
-      <span class="sem-badge" style="color:#22c55e;border-color:#14372a;background:#0a1f17">SEM 2</span>
-      <span class="sem-title">Semester II</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body2">▾</span>
-    </div>
-    <div class="subjects" id="body2">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Math</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Mechanics</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Materials</span>
-        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Drawing</span>
+  <div class="skills-grid">
+    <div class="skill-card reveal glow-card">
+      <div class="skill-card-head"><svg class="icon"><use href="#ic-building"/></svg><h3>Civil Engineering</h3></div>
+      <div class="skill-tags">
+        <span class="skill-tag">ETABS</span><span class="skill-tag">OpenSees</span><span class="skill-tag">Bentley RCDC</span>
+        <span class="skill-tag">SAP2000</span><span class="skill-tag">Plaxis</span><span class="skill-tag">AutoCAD</span>
+        <span class="skill-tag">AutoCAD Civil 3D</span>
       </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics II</span><span class="sub-code">SH 151</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Applied Mechanics</span><span class="sub-code">SH 152</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Engineering Drawing II</span><span class="sub-code">CE 151</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Basic Electronics</span><span class="sub-code">CE 152</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Civil Engineering Materials</span><span class="sub-code">CE 153</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Communication Skills</span><span class="sub-code">SH 153</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
+    </div>
+    <div class="skill-card reveal glow-card">
+      <div class="skill-card-head"><svg class="icon"><use href="#ic-code"/></svg><h3>Programming</h3></div>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span><span class="skill-tag">C++</span><span class="skill-tag">Dart</span>
+        <span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>
+      </div>
+    </div>
+    <div class="skill-card reveal glow-card">
+      <div class="skill-card-head"><svg class="icon"><use href="#ic-toolbox"/></svg><h3>Platforms & Tools</h3></div>
+      <div class="skill-tags">
+        <span class="skill-tag">Git / GitHub</span><span class="skill-tag">WordPress</span>
+        <span class="skill-tag">Jupyter</span><span class="skill-tag">VS Code</span>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="year-label">── Year 2 ──────────────────</div>
+<!-- ================= PROJECTS ================= -->
+<section id="projects">
+  <div class="section-label reveal">Things I've Built</div>
+  <h2 class="section-title reveal">Projects &<br><span class="grad-text">Contributions.</span></h2>
+  <p class="section-sub reveal">Built to solve. Shared to contribute.</p>
 
-  <div class="sem-card" id="sem3">
-    <div class="sem-header" onclick="toggle('body3')">
-      <span class="sem-badge" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">SEM 3</span>
-      <span class="sem-title">Semester III</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body3">▾</span>
-    </div>
-    <div class="subjects" id="body3">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Structures</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Fluid</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Survey</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Geo</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics III</span><span class="sub-code">SH 201</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Strength of Materials</span><span class="sub-code">CE 201</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Fluid Mechanics</span><span class="sub-code">WRE 212</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Surveying I</span><span class="sub-code">CE 203</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Geology for Engineers</span><span class="sub-code">CE 204</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Theory of Structures I</span><span class="sub-code">CE 205</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
+  <div class="filter-row reveal">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="structural">Structural Design</button>
+    <button class="filter-btn" data-filter="opensource">Open Source Projects</button>
   </div>
 
-  <div class="sem-card" id="sem4">
-    <div class="sem-header" onclick="toggle('body4')">
-      <span class="sem-badge" style="color:#f97316;border-color:#3d2008;background:#221205">SEM 4</span>
-      <span class="sem-title">Semester IV</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body4">▾</span>
-    </div>
-    <div class="subjects" id="body4">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Geotech</span>
-        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">Structures</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Hydraulics</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Survey</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Engineering Mathematics IV</span><span class="sub-code">CE 251</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Surveying II</span><span class="sub-code">CE 252</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Theory of Structures II</span><span class="sub-code">CE 253</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Concrete Technology</span><span class="sub-code">CE 254</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Geotechnical Engineering</span><span class="sub-code">CE 255</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Hydraulics</span><span class="sub-code">CE 256</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
+  <div class="placeholder-grid" id="projectGrid">
+    <div class="placeholder-card reveal glow-card" data-cat="structural"><svg class="icon"><use href="#ic-diagram"/></svg><span class="placeholder-cat">Structural Design</span><div class="placeholder-title">Add project</div></div>
+    <div class="placeholder-card reveal glow-card" data-cat="opensource"><svg class="icon"><use href="#ic-diagram"/></svg><span class="placeholder-cat">Open Source</span><div class="placeholder-title">Add project</div></div>
+    <div class="placeholder-card reveal glow-card" data-cat="structural"><svg class="icon"><use href="#ic-diagram"/></svg><span class="placeholder-cat">Structural Design</span><div class="placeholder-title">Add project</div></div>
   </div>
+</section>
 
-  <div class="year-label">── Year 3 ──────────────────</div>
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="section-label reveal">Get in Touch</div>
+  <h2 class="section-title reveal">Let's Work<br><span class="grad-text">Together.</span></h2>
+  <p class="section-sub reveal">Have a question, idea, or collaboration in mind? Reach out.</p>
 
-  <div class="sem-card" id="sem5">
-    <div class="sem-header" onclick="toggle('body5')">
-      <span class="sem-badge" style="color:#ec4899;border-color:#3d1228;background:#220a17">SEM 5</span>
-      <span class="sem-title">Semester V</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body5">▾</span>
-    </div>
-    <div class="subjects" id="body5">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#ec4899;border-color:#3d1228;background:#220a17">Design</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Transport</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Water</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Foundation</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Structural Analysis</span><span class="sub-code">CE 301</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Design of Steel Structures</span><span class="sub-code">CE 302</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Transportation Engineering I</span><span class="sub-code">CE 303</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Foundation Engineering</span><span class="sub-code">CE 304</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Water Supply Engineering</span><span class="sub-code">CE 305</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Estimating & Costing</span><span class="sub-code">CE 306</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
+  <div class="contact-channels">
+    <a href="mailto:tek.r.joshi1@gmail.com" class="contact-channel reveal">
+      <div class="ch-icon"><svg class="icon"><use href="#ic-mail"/></svg></div>
+      <div><div class="ch-label">Email</div><div class="ch-value">tek.r.joshi1@gmail.com</div></div>
+    </a>
+    <a href="https://www.linkedin.com/in/tekrajjoshi1/" class="contact-channel reveal">
+      <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">in</div>
+      <div><div class="ch-label">LinkedIn</div><div class="ch-value">tekrajjoshi1</div></div>
+    </a>
+    <a href="#" class="contact-channel reveal">
+      <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">GH</div>
+      <div><div class="ch-label">GitHub</div><div class="ch-value">Add your GitHub link</div></div>
+    </a>
   </div>
+</section>
 
-  <div class="sem-card" id="sem6">
-    <div class="sem-header" onclick="toggle('body6')">
-      <span class="sem-badge" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">SEM 6</span>
-      <span class="sem-title">Semester VI</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body6">▾</span>
-    </div>
-    <div class="subjects" id="body6">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#14b8a6;border-color:#0d2e2b;background:#071a19">RCC</span>
-        <span class="type-tag" style="color:#f97316;border-color:#3d2008;background:#221205">Transport</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Irrigation</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Hydro</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Design of RCC Structures</span><span class="sub-code">CE 351</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Transportation Engineering II</span><span class="sub-code">CE 352</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Irrigation Engineering</span><span class="sub-code">CE 353</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Sanitation Engineering</span><span class="sub-code">CE 354</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Construction Management</span><span class="sub-code">CE 355</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Hydrology</span><span class="sub-code">CE 356</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div>&copy; 2026 Tek Raj Joshi · Designed &amp; Built by Tek Raj Joshi</div>
+  <div class="footer-social">
+    <a href="#" class="social-badge glow-border" title="Add your GitHub link"><svg class="icon"><use href="#ic-github"/></svg></a>
+    <a href="https://www.linkedin.com/in/tekrajjoshi1/" class="social-badge glow-border" title="LinkedIn"><svg class="icon"><use href="#ic-linkedin"/></svg></a>
+    <a href="#" class="social-badge glow-border" title="Add your Facebook link"><svg class="icon"><use href="#ic-facebook"/></svg></a>
+    <a href="#" class="social-badge glow-border" title="Add your Twitter/X link"><svg class="icon"><use href="#ic-twitter"/></svg></a>
+    <a href="#" class="social-badge glow-border" title="Add your Instagram link"><svg class="icon"><use href="#ic-instagram"/></svg></a>
   </div>
-
-  <div class="year-label">── Year 4 ──────────────────</div>
-
-  <div class="sem-card" id="sem7">
-    <div class="sem-header" onclick="toggle('body7')">
-      <span class="sem-badge" style="color:#eab308;border-color:#3a2e06;background:#201a04">SEM 7</span>
-      <span class="sem-title">Semester VII</span>
-      <span class="sem-meta">6 subjects</span>
-      <span class="chevron" id="chev-body7">▾</span>
-    </div>
-    <div class="subjects" id="body7">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#eab308;border-color:#3a2e06;background:#201a04">Hydro</span>
-        <span class="type-tag" style="color:#3b82f6;border-color:#1e3a5f;background:#0e1e33">Environ</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Geotech</span>
-        <span class="type-tag" style="color:#a855f7;border-color:#2e1a47;background:#1a0f2a">GIS</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Hydropower Engineering</span><span class="sub-code">WRE 410</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Environmental Engineering</span><span class="sub-code">CE 402</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Ground Improvement Techniques</span><span class="sub-code">CE 403</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Remote Sensing & GIS</span><span class="sub-code">CE 404</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Engineering Economics</span><span class="sub-code">CE 405</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">6</span><span class="sub-name">Elective I</span><span class="sub-code">CE 406</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
-  </div>
-
-  <div class="sem-card" id="sem8">
-    <div class="sem-header" onclick="toggle('body8')">
-      <span class="sem-badge" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">SEM 8</span>
-      <span class="sem-title">Semester VIII</span>
-      <span class="sem-meta">5 subjects</span>
-      <span class="chevron" id="chev-body8">▾</span>
-    </div>
-    <div class="subjects" id="body8">
-      <div class="type-nav">
-        <span class="type-nav-label">TOPICS →</span>
-        <span class="type-tag" style="color:#6366f1;border-color:#1e1f4a;background:#10112a">Project</span>
-        <span class="type-tag" style="color:#ec4899;border-color:#3d1228;background:#220a17">Elective</span>
-        <span class="type-tag" style="color:#22c55e;border-color:#14372a;background:#0a1f17">Field</span>
-      </div>
-      <div class="sub-row"><span class="sub-num">1</span><span class="sub-name">Project Work / Thesis</span><span class="sub-code">CE 451</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">2</span><span class="sub-name">Professional Practice</span><span class="sub-code">CE 452</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">3</span><span class="sub-name">Elective II</span><span class="sub-code">CE 453</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">4</span><span class="sub-name">Elective III</span><span class="sub-code">CE 454</span><span class="sub-arrow">›</span></div>
-      <div class="sub-row"><span class="sub-num">5</span><span class="sub-name">Internship / Field Work</span><span class="sub-code">CE 455</span><span class="sub-arrow">›</span></div>
-      <div class="add-mat"><span>+</span> Add Materials / PDF</div>
-    </div>
-  </div>
-
-  <div class="footer">// BE Civil · Pokhara University · 8 Semesters · 47 Subjects</div>
-
-</div>
+</footer>
 
 <script>
-function toggle(id) {
-  const body = document.getElementById(id);
-  const chev = document.getElementById('chev-' + id);
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  chev.classList.toggle('open', !isOpen);
-}
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        e.target.querySelectorAll('.prof-fill').forEach(bar => {
+          bar.style.width = bar.dataset.pct + '%';
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('#projectGrid .placeholder-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      projectCards.forEach(card => {
+        card.style.display = (f === 'all' || card.dataset.cat === f) ? 'flex' : 'none';
+      });
+    });
+  });
+
+  const tlEl = document.querySelector('.timeline');
+  const tlProgress = document.getElementById('tlProgress');
+  const tlDot = document.getElementById('tlDot');
+  let tlTicking = false;
+  function updateTimeline(){
+    tlTicking = false;
+    if (!tlEl) return;
+    const rect = tlEl.getBoundingClientRect();
+    const vh = window.innerHeight;
+    let progress = (vh * 0.75 - rect.top) / rect.height;
+    progress = Math.max(0, Math.min(1, progress));
+    const pct = (progress * 100) + '%';
+    tlProgress.style.height = pct;
+    tlDot.style.top = pct;
+  }
+  function requestTimelineUpdate(){
+    if (!tlTicking) { tlTicking = true; requestAnimationFrame(updateTimeline); }
+  }
+  window.addEventListener('scroll', requestTimelineUpdate);
+  window.addEventListener('resize', requestTimelineUpdate);
+  updateTimeline();
 </script>
-</body>
-</html>
 
-  /* TOPIC FILTER BOX */
-  .topic-box {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .topic-box-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: .8rem;
-  }
-  .topic-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-  }
-  .topic-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 8px 10px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-  }
-  .topic-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
-  .topic-name { font-size: 12px; color: var(--text2); line-height: 1.4; }
-
-  /* SECTION DIVIDER */
-  .section-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 2.5rem 0 1.5rem;
-  }
-  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
-  .section-divider-text {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--text3);
-    white-space: nowrap;
-  }
-
-  /* TYPE CARD */
-  .type-card {
-    border-radius: 12px;
-    border: 1px solid var(--border2);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-  .type-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 1.1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .type-badge {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    width: 52px;
-    height: 52px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .type-title-block { flex: 1; }
-  .type-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 3px;
-    letter-spacing: -.01em;
-  }
-  .type-subtitle { font-size: 12px; color: var(--text2); }
-  .type-freq {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .type-body { padding: 1.25rem 1.5rem; background: var(--surface); }
-  .type-body > * + * { margin-top: 1rem; }
-
-  /* INNER SECTIONS */
-  .inner-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 6px;
-  }
-  .concept-text {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.65;
-    padding: 10px 14px;
-    background: var(--surface2);
-    border-radius: 6px;
-    border-left: 2px solid var(--border2);
-  }
-
-  /* FORMULA */
-  .formula-block {
-    font-family: var(--mono);
-    font-size: 12px;
-    background: #0a0a0a;
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: #d4d4d4;
-    overflow-x: auto;
-    white-space: pre;
-    line-height: 1.8;
-  }
-  .formula-block .hl { color: #7dd3fc; }
-  .formula-block .val { color: #86efac; }
-  .formula-block .op { color: #f9a8d4; }
-  .formula-block .cm { color: #6b7280; }
-
-  /* STEPS */
-  .steps-grid { display: flex; flex-direction: column; gap: 4px; }
-  .step-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 6px 10px;
-    border-radius: 5px;
-    background: var(--surface2);
-  }
-  .step-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    flex-shrink: 0;
-    min-width: 20px;
-    padding-top: 1px;
-  }
-  .step-text { font-size: 12.5px; color: var(--text2); line-height: 1.55; }
-  .step-text strong { color: var(--text); font-weight: 500; }
-
-  /* METHODS CHIPS */
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-    background: var(--surface2);
-  }
-
-  /* VARIATIONS */
-  .var-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
-  .var-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 10px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 12px;
-    color: var(--text2);
-  }
-  .var-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-
-  /* QUESTIONS TABLE */
-  .q-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .q-table thead tr { background: var(--surface2); }
-  .q-table th {
-    padding: 8px 12px;
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    border-bottom: 1px solid var(--border2);
-    font-weight: 500;
-  }
-  .q-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    line-height: 1.5;
-  }
-  .q-table tr:last-child td { border-bottom: none; }
-  .q-table tr:hover td { background: var(--surface2); }
-  .q-year {
-    font-family: var(--mono);
-    font-size: 11px;
-    white-space: nowrap;
-    color: var(--text2);
-  }
-  .q-num {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    white-space: nowrap;
-  }
-  .q-text { color: var(--text2); }
-  .q-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-  .q-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 1px 7px;
-    border-radius: 3px;
-    border: 1px solid;
-  }
-  .tag-beam { border-color: #3d2f7a; color: #a78bfa; background: #1a1530; }
-  .tag-load { border-color: #1a4535; color: #34d399; background: #0d2218; }
-  .tag-find { border-color: #1a3a6a; color: #60a5fa; background: #0d1a2e; }
-  .tag-method { border-color: #5c1a1a; color: #f87171; background: #200d0d; }
-  .tag-special { border-color: #4a3d00; color: #facc15; background: #1c1700; }
-  .q-type { font-family: var(--mono); font-size: 10px; color: var(--text3); }
-
-  /* TIP BOX */
-  .tip-box {
-    display: flex;
-    gap: 10px;
-    padding: 11px 14px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    line-height: 1.6;
-  }
-  .tip-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
-  .tip-text { color: var(--text2); }
-  .tip-text strong { font-weight: 500; }
-
-  /* PATTERN RECOGNIZER */
-  .pattern-box {
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 12.5px;
-    color: var(--text2);
-    border-left: 3px solid var(--border2);
-    line-height: 1.65;
-  }
-  .pattern-box ul { margin-top: 6px; padding-left: 16px; }
-  .pattern-box li { margin-bottom: 3px; }
-
-  /* THEORY SECTION */
-  .theory-card {
-    background: var(--surface);
-    border: 1px solid var(--thb);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .theory-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .8rem 1.25rem;
-    background: var(--thbg);
-    border-bottom: 1px solid var(--thb);
-    gap: 10px;
-  }
-  .theory-q { font-size: 13px; color: var(--text); line-height: 1.4; flex: 1; }
-  .theory-body { padding: 1rem 1.25rem; }
-  .theory-freq {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 3px;
-    background: var(--thb);
-    color: var(--th);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .theory-row {
-    display: flex;
-    gap: 8px;
-    font-size: 12px;
-    margin-bottom: 5px;
-  }
-  .theory-lbl {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text3);
-    flex-shrink: 0;
-    padding-top: 2px;
-    min-width: 70px;
-    text-transform: uppercase;
-  }
-  .theory-val { color: var(--text2); line-height: 1.5; }
-
-  /* MOST IMPORTANT */
-  .mi-card {
-    background: var(--mibg);
-    border: 1px solid var(--mib);
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .mi-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: .8rem;
-  }
-  .mi-icon { font-size: 16px; }
-  .mi-title { font-size: 14px; font-weight: 600; color: var(--mi); }
-  .mi-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
-  .mi-item {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 7px 10px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 5px;
-    border: 1px solid rgba(45,212,191,0.08);
-  }
-  .mi-bullet {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--mi);
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
-  .mi-text { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
-  .mi-text strong { color: var(--text); font-weight: 500; }
-
-  /* SUMMARY TABLE */
-  .sum-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .sum-table th {
-    padding: 8px 12px;
-    background: var(--surface2);
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--text3);
-    border-bottom: 1px solid var(--border2);
-    font-weight: 500;
-  }
-  .sum-table td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  .sum-table tr:last-child td { border-bottom: none; }
-  .priority-pill {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 2px 9px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-
-  /* ANCHOR OFFSET */
-  [id] { scroll-margin-top: 52px; }
-</style>
-</head>
-<body>
-
-<!-- HEADER -->
-<div class="site-header">
-  <div class="header-label">Question Pattern Intelligence System · Structural Analysis I</div>
-  <div class="header-title">Unit III — Slope &amp; Deflection of Beams: Geometric Methods</div>
-  <div class="header-sub">Pokhara University · Exam Pattern Analysis · 2013 Fall → 2022 Fall · 17 Questions Classified</div>
-  <div class="header-meta">
-    <span class="meta-chip">6 hrs syllabus</span>
-    <span class="meta-chip">6 question types</span>
-    <span class="meta-chip">17 previous questions</span>
-    <span class="meta-chip hot">★★ Type 5 = most repeated</span>
-    <span class="meta-chip">Methods: Double Integration · Macaulay · Moment Area · Conjugate Beam</span>
-  </div>
-</div>
-
-<!-- NAV -->
-<div class="nav">
-  <span class="nav-label">Jump →</span>
-  <a class="nav-btn" href="#topics">Topics</a>
-  <a class="nav-btn" style="border-color:#3d2f7a;color:#a78bfa" href="#t1">Type 1</a>
-  <a class="nav-btn" style="border-color:#1a4535;color:#34d399" href="#t2">Type 2</a>
-  <a class="nav-btn" style="border-color:#5c2d0a;color:#fb923c" href="#t3">Type 3</a>
-  <a class="nav-btn" style="border-color:#1a3a6a;color:#60a5fa" href="#t4">Type 4</a>
-  <a class="nav-btn" style="border-color:#5c1a1a;color:#f87171" href="#t5">Type 5</a>
-  <a class="nav-btn" style="border-color:#4a3d00;color:#facc15" href="#t6">Type 6</a>
-  <a class="nav-btn" style="border-color:#5c1a66;color:#e879f9" href="#theory">Theory</a>
-  <a class="nav-btn" style="border-color:#1a4a44;color:#2dd4bf" href="#most-imp">Most Imp.</a>
-</div>
-
-<div class="container">
-
-  <!-- TOPIC FILTERS -->
-  <div id="topics" class="topic-box" style="margin-top:1.5rem">
-    <div class="topic-box-title">Syllabus Scope — Topics Included</div>
-    <div class="topic-grid">
-      <div class="topic-item"><span class="topic-num">3.1</span><span class="topic-name">Double Integration Method</span></div>
-      <div class="topic-item"><span class="topic-num">3.2</span><span class="topic-name">Macaulay's Method</span></div>
-      <div class="topic-item"><span class="topic-num">3.3</span><span class="topic-name">Superposition Method</span></div>
-      <div class="topic-item"><span class="topic-num">3.4</span><span class="topic-name">Conjugate Beam Method</span></div>
-      <div class="topic-item"><span class="topic-num">3.5</span><span class="topic-name">Moment Area Method</span></div>
-      <div class="topic-item"><span class="topic-num">3.6</span><span class="topic-name">Conjugate Beam (Advanced)</span></div>
-    </div>
-  </div>
-
-  <!-- SECTION LABEL -->
-  <div class="section-divider">
-    <div class="section-divider-line"></div>
-    <div class="section-divider-text">Numerical Question Types</div>
-    <div class="section-divider-line"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 1 ═══ -->
-  <div id="t1" class="type-card" style="background:var(--t1bg);border-color:var(--t1b)">
-    <div class="type-header" style="background:#12102a;border-color:var(--t1b)">
-      <div class="type-badge" style="background:var(--t1b);color:var(--t1)">T-1</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t1)">Simply Supported Beam — Uniform EI, Standard Load</div>
-        <div class="type-subtitle">Double Integration Method · Moment Area Method</div>
-      </div>
-      <div class="type-freq" style="background:var(--t1b);color:var(--t1)">Low · 2 Qs</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">Standard simply supported beam with ONE load type (single point load OR full-span UDL). EI is constant throughout. Find slope at supports and/or deflection at mid-span or any point. This is the foundational type — all other types build on it.</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Methods Used</div>
-        <div class="chips">
-          <span class="chip" style="border-color:var(--t1b);color:var(--t1)">Double Integration</span>
-          <span class="chip" style="border-color:var(--t1b);color:var(--t1)">Moment Area Theorem</span>
-          <span class="chip">Conjugate Beam (alternate)</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Formula</div>
-        <div class="formula-block"><span class="cm">// Double Integration</span>
-EI·d²y/dx² = <span class="hl">M(x)</span>
-EI·dy/dx  = ∫M(x)dx + <span class="val">C₁</span>      <span class="cm">← slope equation</span>
-EI·y      = ∫∫M(x)dx + <span class="val">C₁</span>x + <span class="val">C₂</span>  <span class="cm">← deflection equation</span>
-
-<span class="cm">// Boundary Conditions for SSB</span>
-y = 0 at x = 0  →  <span class="val">C₂ = 0</span>
-y = 0 at x = L  →  solve for <span class="val">C₁</span>
-
-<span class="cm">// Standard Results (memorize)</span>
-θ_max = <span class="op">PL²/16EI</span>     δ_max = <span class="op">PL³/48EI</span>   <span class="cm">(central point load)</span>
-θ_max = <span class="op">wL³/24EI</span>     δ_max = <span class="op">5wL⁴/384EI</span> <span class="cm">(full UDL)</span></div>
-      </div>
-
-      <div>
-        <div class="inner-label">How to Recognize in Exam</div>
-        <div class="pattern-box">
-          You see this type when: SSB with <strong>single clean load</strong>, no overhangs, no internal hinges, EI = constant.
-          <ul>
-            <li>Question asks: slope at A, slope at B, deflection at centre/midspan, or deflection at any single x</li>
-            <li>One M(x) expression covers the whole span without breaks</li>
-            <li>Integrate twice → apply two BCs → done</li>
-          </ul>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Sub-Variations</div>
-        <div class="var-grid">
-          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Symmetric loading, find θ_A</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Rotation at A only (moment area)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Deflection at centre</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t1)"></span>Both slope and deflection at same point</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t1b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q3</td>
-              <td class="q-year">2015 Fall</td>
-              <td class="q-text">Find slope at A — stepped SSB (3EI, 2EI spans), point loads only, using moment area method
-                <div class="q-tags">
-                  <span class="q-tag tag-beam">SSB</span>
-                  <span class="q-tag tag-load">Point Load</span>
-                  <span class="q-tag tag-find">Slope at A</span>
-                  <span class="q-tag tag-method">Moment Area</span>
-                </div>
-              </td>
-              <td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q6</td>
-              <td class="q-year">2015 Spring</td>
-              <td class="q-text">Find rotation at A — SSB with two equal point loads (symmetric), stepped EI (I, 2I, I), using moment area method
-                <div class="q-tags">
-                  <span class="q-tag tag-beam">SSB</span>
-                  <span class="q-tag tag-load">2 Equal Loads</span>
-                  <span class="q-tag tag-find">Rotation at A</span>
-                  <span class="q-tag tag-method">Moment Area</span>
-                  <span class="q-tag tag-special">Symmetric</span>
-                </div>
-              </td>
-              <td class="q-type">Numerical</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#12102a;border:1px solid var(--t1b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>Exam tip:</strong> Both Q3 and Q6 appear simple but have <strong>stepped EI</strong> — making them actually Type 3 hybrids. Master Type 3 first. For pure Type 1 (uniform EI), use standard formula directly — no integration needed. Symmetry shortcut: if loading and beam are symmetric, θ_A = θ_B in magnitude, compute only one side.</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 2 ═══ -->
-  <div id="t2" class="type-card" style="background:var(--t2bg);border-color:var(--t2b)">
-    <div class="type-header" style="background:#09180f;border-color:var(--t2b)">
-      <div class="type-badge" style="background:var(--t2b);color:var(--t2)">T-2</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t2)">Multiple / Partial Loads — Macaulay's Method</div>
-        <div class="type-subtitle">Double Integration with Bracket Notation · Discontinuous Loading</div>
-      </div>
-      <div class="type-freq" style="background:var(--t2b);color:var(--t2)">Medium · 1 Q</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">SSB or overhanging beam with more than one point load, OR a UDL that does NOT cover the full span. A single clean M(x) cannot be written — Macaulay's bracket notation ⟨x−a⟩ handles each load discontinuity in ONE unified equation, so integration is done only once.</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Methods Used</div>
-        <div class="chips">
-          <span class="chip" style="border-color:var(--t2b);color:var(--t2)">Macaulay's Method</span>
-          <span class="chip" style="border-color:var(--t2b);color:var(--t2)">Double Integration</span>
-          <span class="chip">Partial UDL Extension Trick</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Formula &amp; Rules</div>
-        <div class="formula-block"><span class="cm">// General Macaulay equation (section at extreme right X-X)</span>
-EI·d²y/dx² = R_A·x <span class="op">−</span> P₁⟨x<span class="op">−</span>a⟩ <span class="op">−</span> P₂⟨x<span class="op">−</span>b⟩ <span class="op">−</span> (w/2)⟨x<span class="op">−</span>c⟩² <span class="op">+</span> (w/2)⟨x<span class="op">−</span>d⟩²
-
-<span class="cm">// PARTIAL UDL TRICK — for UDL from x=c to x=d only:</span>
-<span class="val">Extend UDL to right end → then add equal+opposite UDL from x=d</span>
-<span class="val">This gives: −(w/2)⟨x−c⟩² + (w/2)⟨x−d⟩²</span>
-
-<span class="cm">// Rules:</span>
-<span class="hl">Rule 1:</span> NEVER drop bracket terms mid-integration
-<span class="hl">Rule 2:</span> Only substitute x AND drop terms where ⟨x−a⟩ &lt; 0 at FINAL step
-<span class="hl">Rule 3:</span> Point load → ⟨x−a⟩¹, UDL → ⟨x−a⟩², Moment → ⟨x−a⟩⁰</div>
-      </div>
-
-      <div>
-        <div class="inner-label">How to Recognize in Exam</div>
-        <div class="pattern-box">
-          You see this type when: multiple point loads at different positions, OR UDL over part of span only.
-          <ul>
-            <li>Keywords: "UDL over middle third", "concentrated loads at 1m, 4m, 7m", "two point loads"</li>
-            <li>Cannot write single M(x) — must section at extreme right end</li>
-            <li>Usually asks: deflection at mid-span or at load point</li>
-          </ul>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Sub-Variations</div>
-        <div class="var-grid">
-          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Partial UDL (middle ⅓ of span)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Two or more point loads</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>UDL + point loads combined</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>Overhang with multiple loads</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t2)"></span>End moment + point load</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t2b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q5</td>
-              <td class="q-year">2015 Fall</td>
-              <td class="q-text">SSB span 6m, overhangs 2m each side. UDL 5kN/m on middle 6m only. Point loads 20kN each at 1m from free ends. Find deflection at midspan. Use Macaulay's method.
-                <div class="q-tags">
-                  <span class="q-tag tag-beam">SSB + Overhang</span>
-                  <span class="q-tag tag-load">Partial UDL + 2 Point Loads</span>
-                  <span class="q-tag tag-find">Mid-span Deflection</span>
-                  <span class="q-tag tag-method">Macaulay's</span>
-                  <span class="q-tag tag-special">Partial UDL Trick</span>
-                </div>
-              </td>
-              <td class="q-type">Numerical</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#09180f;border:1px solid var(--t2b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>Critical trick in Q5:</strong> The UDL acts only on the middle 6m — NOT the full 10m span. To handle this in Macaulay's: extend UDL to the right end, then subtract it back from x=8. This is the most commonly missed step. Also: reactions at overhanging supports need careful ΣM calculation from the extreme end, not from one support.</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 3 ═══ -->
-  <div id="t3" class="type-card" style="background:var(--t3bg);border-color:var(--t3b)">
-    <div class="type-header" style="background:#160e04;border-color:var(--t3b)">
-      <div class="type-badge" style="background:var(--t3b);color:var(--t3)">T-3</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t3)">Stepped / Varying EI Beam — M/EI Diagram Method</div>
-        <div class="type-subtitle">Moment Area · Conjugate Beam · EI changes span-to-span</div>
-      </div>
-      <div class="type-freq" style="background:var(--t3b);color:var(--t3)">★ High · 5 Qs</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">Beam has different flexural stiffness in different spans — e.g. 3EI, 2EI, EI. You CANNOT use a uniform M/EI. Each span's bending moment ordinate must be divided by its own local EI to get the M/EI ordinate. In later questions (Q14, Q16), E and cross-section dimensions are given numerically — you must compute I = bd³/12 first, then EI in kN·m².</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Methods Used</div>
-        <div class="chips">
-          <span class="chip" style="border-color:var(--t3b);color:var(--t3)">Moment Area Theorem 1 &amp; 2</span>
-          <span class="chip" style="border-color:var(--t3b);color:var(--t3)">Conjugate Beam (verification)</span>
-          <span class="chip">M/EI diagram (piecewise)</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Formula</div>
-        <div class="formula-block"><span class="cm">// M/EI ordinate — use LOCAL EI of that span</span>
-Ordinate = M(x) ÷ <span class="hl">local EI of that span</span>
-  → span with 2EI: ordinate = M / 2EI  <span class="cm">(half the value!)</span>
-  → span with 3EI: ordinate = M / 3EI
-
-<span class="cm">// When numerical E, b, d given:</span>
-I = <span class="val">bd³ / 12</span>   (in mm⁴ → convert to m⁴: ×10⁻¹²)
-EI = E × I     (in kN·m²)
-
-<span class="cm">// Moment Area Theorem 2:</span>
-Δ_B/A = <span class="op">Σ( Area_i × x̄_i )</span>  about point B
-θ_A   = Δ_B/A / L
-
-<span class="cm">// Centroid of standard shapes:</span>
-Triangle: x̄ = L/3 from taller end
-Parabola (UDL): x̄ = 3L/8 from taller end, area = (2/3)bh</div>
-      </div>
-
-      <div>
-        <div class="inner-label">How to Recognize in Exam</div>
-        <div class="pattern-box">
-          Keywords: "EI", "2EI", "3EI" labeled on beam diagram — OR numerical values of E (in N/mm²) + b×d given.
-          <ul>
-            <li>Beam is drawn with different stiffness labels for different portions</li>
-            <li>OR: "Take E = 12600 N/mm², consider 350mm wide 500mm deep beam"</li>
-            <li>Always compute I = bd³/12 first when dimensions are given</li>
-            <li>Draw M/EI diagram SEPARATELY for each span segment</li>
-          </ul>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Sub-Variations</div>
-        <div class="var-grid">
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>2-span: EI + 2EI</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>3-span: 3EI + 2EI + EI</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Symmetric: I + 2I + I</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Numerical E + I (compute I first)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Find slope at A only</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Find both slope + deflection</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t3)"></span>Answer in mm (convert ×1000)</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t3b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q3</td>
-              <td class="q-year">2015 Fall</td>
-              <td class="q-text">SSB, stepped EI (3EI, 2EI spans), point loads. Find slope at A using moment area method.
-                <div class="q-tags"><span class="q-tag tag-beam">SSB</span><span class="q-tag tag-load">Point Loads</span><span class="q-tag tag-find">Slope at A</span><span class="q-tag tag-method">Moment Area</span><span class="q-tag tag-special">Stepped EI</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q6</td>
-              <td class="q-year">2015 Spring</td>
-              <td class="q-text">SSB, 3 spans (I, 2I, I), two equal 8kN loads. Find rotation at A.
-                <div class="q-tags"><span class="q-tag tag-beam">SSB Symmetric</span><span class="q-tag tag-load">2×8kN</span><span class="q-tag tag-find">Rotation at A</span><span class="q-tag tag-method">Moment Area</span><span class="q-tag tag-special">I + 2I + I</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q10</td>
-              <td class="q-year">2017 Fall</td>
-              <td class="q-text">SSB with overhang, stepped EI (2EI + EI), 20kN + 10kN/m + 30kN. Find slope at A and deflection at C using moment area AND conjugate beam.
-                <div class="q-tags"><span class="q-tag tag-beam">SSB + Overhang</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">Slope &amp; Deflection</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">2EI + EI</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q14</td>
-              <td class="q-year">2019 Fall</td>
-              <td class="q-text">Stepped beam (2EI, EI), 20kN + 8kN/m UDL. E = 12600 N/mm², 350mm×500mm section. Find deflection at B and D, slope at A. Verify by moment area and conjugate beam.
-                <div class="q-tags"><span class="q-tag tag-beam">Stepped Beam</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">Deflection in mm</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Numerical EI</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q16</td>
-              <td class="q-year">2021 Fall</td>
-              <td class="q-text">Stepped beam (2EI, EI), 10kN/m + 40kN. E = 13000 N/mm², 400mm×500mm section. Find deflection at B using conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">Stepped Beam</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection at B (mm)</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Numerical EI</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#160e04;border:1px solid var(--t3b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>Most common mistake:</strong> Using same EI for all spans. Each span has its OWN ordinate. For numerical EI (Q14, Q16): compute I = bd³/12 in mm⁴ → convert to m⁴ (× 10⁻¹²) → multiply by E in kN/m² → get EI. Final answer: divide by EI and convert to mm (× 1000). <strong>Q14 answer: Δ_D = 8.98 mm, Δ_B = 1.80 mm.</strong></span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 4 ═══ -->
-  <div id="t4" class="type-card" style="background:var(--t4bg);border-color:var(--t4b)">
-    <div class="type-header" style="background:#091524;border-color:var(--t4b)">
-      <div class="type-badge" style="background:var(--t4b);color:var(--t4)">T-4</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t4)">Overhang Beam — Slope &amp; Deflection at Free End</div>
-        <div class="type-subtitle">Conjugate Beam Method · Free End Analysis</div>
-      </div>
-      <div class="type-freq" style="background:var(--t4b);color:var(--t4)">★ High · 4 Qs</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">Beam extends beyond one or both supports (overhang). The overhanging portion behaves like a cantilever. In the conjugate beam method: the free end of the real beam remains a free end in the conjugate beam — it carries M/EI load but has NO support. Slope at free end = shear in conjugate beam at that point. Deflection at free end = moment in conjugate beam at that point.</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Methods Used</div>
-        <div class="chips">
-          <span class="chip" style="border-color:var(--t4b);color:var(--t4)">Conjugate Beam Method</span>
-          <span class="chip" style="border-color:var(--t4b);color:var(--t4)">Moment Area (verification)</span>
-          <span class="chip">Superposition (for complex loads)</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Formula &amp; Support Conversion</div>
-        <div class="formula-block"><span class="cm">// Conjugate Beam Support Conversion Rules:</span>
-Real beam Pin    → Conjugate beam <span class="hl">Pin</span>
-Real beam Roller → Conjugate beam <span class="hl">Roller</span>
-Real beam Fixed  → Conjugate beam <span class="hl">Free end</span>  <span class="cm">← (they swap!)</span>
-Real beam Free   → Conjugate beam <span class="hl">Fixed end</span> <span class="cm">← (they swap!)</span>
-
-<span class="cm">// For overhang: free end stays free in conjugate beam</span>
-<span class="cm">// (overhang free end is NOT a fixed end)</span>
-
-<span class="cm">// At free end C of conjugate beam:</span>
-θ_C = <span class="val">V'_C</span>  (shear in conjugate beam at C)
-Δ_C = <span class="val">M'_C</span>  (moment in conjugate beam at C)
-
-<span class="cm">// Sign: −ve M' → downward deflection (sagging is +ve)</span></div>
-      </div>
-
-      <div>
-        <div class="inner-label">How to Recognize in Exam</div>
-        <div class="pattern-box">
-          Keywords: "beam with overhang", "free end", "deflection at C (free end)", diagram shows beam extending past a support.
-          <ul>
-            <li>Overhang part of BMD is usually negative (hogging) — triangular shape</li>
-            <li>Conjugate beam has M/EI load on overhang part but no tip support</li>
-            <li>Take moment about supports to find R'_A, R'_B, then cut section at C</li>
-          </ul>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Sub-Variations</div>
-        <div class="var-grid">
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>UDL on overhang portion only</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Point load at free end</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Varying UDL on overhang</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Deflection at midpoint of span (not free end)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Stepped EI + overhang combined</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t4)"></span>Slope AND deflection both required</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t4b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q4</td>
-              <td class="q-year">2015 Fall</td>
-              <td class="q-text">SSB (4m) + overhang (2m). 30kN/m UDL on overhang portion. Find slope and deflection at free end C using conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL on overhang</span><span class="q-tag tag-find">θ_C, Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q7</td>
-              <td class="q-year">2015 Spring</td>
-              <td class="q-text">SSB (4m) + overhang (2m). 30kN/m UDL on cantilever part. Find slope and deflection at free end using conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL on overhang</span><span class="q-tag tag-find">θ, Δ at free end</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Similar to Q4</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q13</td>
-              <td class="q-year">2018 Spring</td>
-              <td class="q-text">Overhanging beam (2EI, EI). Varying UDL 20kN/m + 5kN point load. Find deflection at midpoint of span BC using conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">Overhang + Stepped EI</span><span class="q-tag tag-load">Varying UDL + Point Load</span><span class="q-tag tag-find">Mid BC Deflection</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Integration for Area</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q16</td>
-              <td class="q-year">2021 Fall</td>
-              <td class="q-text">Stepped beam (2EI, EI) with overhang. 10kN/m UDL + 40kN. E = 13000 N/mm², 400×500mm. Find deflection at B in mm.
-                <div class="q-tags"><span class="q-tag tag-beam">Overhang</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection (mm)</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Numerical EI</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#091524;border:1px solid var(--t4b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>Q4 and Q7 are nearly identical</strong> — same beam configuration (4m + 2m overhang), same load type (UDL on overhang). University repeated this. <strong>Q13 is harder</strong>: non-standard M/EI shape (not triangle or parabola) — must use integration to find area and centroid, not ½bh shortcut. M/EI diagram has a parabolic + triangular component.</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 5 ═══ -->
-  <div id="t5" class="type-card" style="background:var(--t5bg);border-color:var(--t5b)">
-    <div class="type-header" style="background:#160808;border-color:var(--t5b)">
-      <div class="type-badge" style="background:var(--t5b);color:var(--t5)">T-5</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t5)">Compound Beam with Internal Hinge — Conjugate Beam FBD Split</div>
-        <div class="type-subtitle">Most Repeated Pattern · Superposition + FBD Analysis of Conjugate Beam</div>
-      </div>
-      <div class="type-freq" style="background:var(--t5b);color:var(--t5)">★★ Very High · 7 Qs</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">Beam has one or more internal hinges connecting multiple spans. Cannot be analysed as a single beam. In the conjugate beam: internal hinges remain as internal hinges. The compound conjugate beam is split at each hinge into separate FBDs (A'B', B'C', C'D' etc.) and each FBD is analysed independently using equilibrium. This is the single most-repeated question type in PU exams — appears in 7 out of 17 questions.</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Methods Used</div>
-        <div class="chips">
-          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Conjugate Beam (primary)</span>
-          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Moment Area (verification)</span>
-          <span class="chip" style="border-color:var(--t5b);color:var(--t5)">Superposition</span>
-          <span class="chip">FBD Equilibrium at Hinges</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Principle &amp; Formula</div>
-        <div class="formula-block"><span class="cm">// At internal hinge in conjugate beam — CRITICAL:</span>
-M' = <span class="hl">0</span>  (moment in conjugate beam at hinge = 0)
-<span class="cm">// This is the KEY equation. Use ΣM=0 about the hinge to find unknowns.</span>
-
-<span class="cm">// V' transfers between parts (NOT zero at hinge):</span>
-V'_left ≠ V'_right at hinge  (there is shear transfer)
-
-<span class="cm">// FBD procedure for each part:</span>
-ΣM = 0  → solve for internal forces at hinge
-ΣFy = 0 → find V' values
-
-<span class="cm">// At any point in conjugate beam:</span>
-Slope     = <span class="val">V'</span>  (shear at that section)
-Deflection = <span class="val">M'</span>  (moment at that section)
-
-<span class="cm">// Conjugate beam support conversion:</span>
-Pin/Roller → unchanged
-Internal hinge → <span class="op">remains internal hinge</span>
-Fixed → Free,   Free → Fixed</div>
-      </div>
-
-      <div>
-        <div class="inner-label">How to Recognize in Exam</div>
-        <div class="pattern-box">
-          Instantly recognizable: beam diagram shows a small circle (∘) symbol at one or more intermediate points — that is an internal hinge.
-          <ul>
-            <li>Beam has 2 or more spans connected by hinges</li>
-            <li>Keywords: "internal hinge at B", "compound beam", "Gerber beam"</li>
-            <li>Superposition usually needed to split complex loads into manageable sub-beams</li>
-            <li>Always draw full M/EI diagram FIRST before splitting into FBDs</li>
-          </ul>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Step-by-Step Solving Order</div>
-        <div class="steps-grid">
-          <div class="step-row"><span class="step-num">01</span><span class="step-text"><strong>Superposition if needed:</strong> Split complex loading into 2 simple sub-beams. Find reactions for each part separately.</span></div>
-          <div class="step-row"><span class="step-num">02</span><span class="step-text"><strong>Draw full BMD</strong> for the complete compound beam. Mark +ve (sagging) and −ve (hogging) regions clearly.</span></div>
-          <div class="step-row"><span class="step-num">03</span><span class="step-text"><strong>Draw M/EI diagram</strong> — divide each BMD ordinate by local EI if stepped, otherwise by uniform EI.</span></div>
-          <div class="step-row"><span class="step-num">04</span><span class="step-text"><strong>Draw conjugate beam</strong> with same M/EI as distributed load. Keep internal hinges exactly as in real beam.</span></div>
-          <div class="step-row"><span class="step-num">05</span><span class="step-text"><strong>Detach at internal hinges</strong> → separate FBDs (A'B', B'C', C'D'). Each FBD has its own unknown shear and moment at the cut.</span></div>
-          <div class="step-row"><span class="step-num">06</span><span class="step-text"><strong>For each FBD:</strong> ΣM=0 about hinge point (using M'=0 condition) → find unknowns. Then ΣFy=0 → find V'.</span></div>
-          <div class="step-row"><span class="step-num">07</span><span class="step-text"><strong>Read results:</strong> Slope at any point = V' at that section. Deflection at any point = M' at that section in conjugate beam.</span></div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Sub-Variations</div>
-        <div class="var-grid">
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>1 internal hinge, 2 spans</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>2 internal hinges, 3 spans</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>3 internal hinges (most complex)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Compound + stepped EI</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Point load + UDL + end moment</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>All 3 methods compared (Q9, Q17)</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Slope at support + deflection at mid</div>
-          <div class="var-item"><span class="var-dot" style="background:var(--t5)"></span>Deflection at span midpoint</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t5b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q1</td>
-              <td class="q-year">2013 Fall</td>
-              <td class="q-text">Compound beam, 2 internal hinges. 50kN point load + 12kN/m UDL. Find slope at A and vertical deflection at C. Use conjugate beam AND moment area.
-                <div class="q-tags"><span class="q-tag tag-beam">Compound (2 hinges)</span><span class="q-tag tag-load">Point + UDL</span><span class="q-tag tag-find">θ_A, Δ_C</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Superposition</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q2</td>
-              <td class="q-year">2014 Fall</td>
-              <td class="q-text">Compound beam. 20kN + 10kN/m + 30kN loads. Find deflection at B and D, slope at A using moment area AND conjugate beam.
-                <div class="q-tags"><span class="q-tag tag-beam">Compound Beam</span><span class="q-tag tag-load">3 load types</span><span class="q-tag tag-find">θ_A, Δ_B, Δ_D</span><span class="q-tag tag-method">Both Methods</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q9</td>
-              <td class="q-year">2016 Spring</td>
-              <td class="q-text">Multi-span beam with 5kN UDL + 5kN point load. Find deflection at free ends E using moment area, integration + Macaulay, AND conjugate beam. Compare all three.
-                <div class="q-tags"><span class="q-tag tag-beam">Multi-span</span><span class="q-tag tag-load">UDL + Point Load</span><span class="q-tag tag-find">Deflection at E</span><span class="q-tag tag-method">All 3 Methods</span><span class="q-tag tag-special">★ Multi-method</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q11</td>
-              <td class="q-year">2017 Spring</td>
-              <td class="q-text">Beam with 3 internal hinges. 5kN/m + 20kN + 50kNm end moment. Find slope at A, deflection at C. Conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">3 Hinges</span><span class="q-tag tag-load">UDL + Point + Moment</span><span class="q-tag tag-find">θ_A, Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Most Complex</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q12</td>
-              <td class="q-year">2018 Fall</td>
-              <td class="q-text">Compound beam, 20kN/m UDL on both spans. Find change in slope at A, deflection at D. Use conjugate beam AND moment area.
-                <div class="q-tags"><span class="q-tag tag-beam">Compound Beam</span><span class="q-tag tag-load">UDL both spans</span><span class="q-tag tag-find">Slope at A, Δ_D</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Symmetric UDL</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q15</td>
-              <td class="q-year">2020 Fall</td>
-              <td class="q-text">Compound beam (I, 2I). 30kN + 80kN + 10kN/m. Find deflection at C using conjugate beam method.
-                <div class="q-tags"><span class="q-tag tag-beam">Compound + Stepped EI</span><span class="q-tag tag-load">2 Point + UDL</span><span class="q-tag tag-find">Δ_C</span><span class="q-tag tag-method">Conjugate Beam</span><span class="q-tag tag-special">Stepped + Compound</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-            <tr>
-              <td class="q-num">Q17</td>
-              <td class="q-year">2022 Fall</td>
-              <td class="q-text">Multi-span beam (EI, EI). 50kN + 100kN. Find deflection at E and D. Use conjugate beam, verify by integration AND moment area.
-                <div class="q-tags"><span class="q-tag tag-beam">Multi-span</span><span class="q-tag tag-load">2 Point Loads</span><span class="q-tag tag-find">Δ_E, Δ_D</span><span class="q-tag tag-method">All 3 Methods</span><span class="q-tag tag-special">★ Multi-method</span></div>
-              </td><td class="q-type">Numerical</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#160808;border:1px solid var(--t5b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>This type appears in EVERY year from 2013–2022 except alternating years.</strong> At the internal hinge: M' = 0 is the magic condition — always write ΣM = 0 about the hinge FIRST. V' is not zero. <strong>Q9 and Q17</strong> ask all three methods — in exams, do conjugate beam first (fastest), moment area second, integration last. <strong>Q11 is the hardest</strong> (3 hinges + end moment) — practice this last.</span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════ TYPE 6 ═══ -->
-  <div id="t6" class="type-card" style="background:var(--t6bg);border-color:var(--t6b)">
-    <div class="type-header" style="background:#130f00;border-color:var(--t6b)">
-      <div class="type-badge" style="background:var(--t6b);color:var(--t6)">T-6</div>
-      <div class="type-title-block">
-        <div class="type-title" style="color:var(--t6)">Design / Reverse Problem — Find Unknown Load for Deflection Limit</div>
-        <div class="type-subtitle">Symbolic Analysis · Back-Calculation · Both Methods Required</div>
-      </div>
-      <div class="type-freq" style="background:var(--t6b);color:var(--t6)">Rare · 1 Q</div>
-    </div>
-    <div class="type-body">
-
-      <div>
-        <div class="inner-label">Core Concept</div>
-        <div class="concept-text">A deflection LIMIT is specified (e.g. Δ_C ≤ 100mm). The UDL intensity w is unknown. You perform the full conjugate beam or moment area analysis symbolically — keeping w in all expressions — to get Δ_C = f(w). Then set f(w) = limit and solve for w. This is the only "design" question type in this chapter.</div>
-      </div>
-
-      <div>
-        <div class="inner-label">Key Formula</div>
-        <div class="formula-block"><span class="cm">// Express deflection symbolically in terms of w:</span>
-Δ_C = <span class="hl">225w / 128EI</span>  (derived from conjugate beam analysis)
-
-<span class="cm">// Set equal to limit (convert mm → m first!):</span>
-<span class="val">100 mm = 0.1 m</span>
-
-<span class="cm">// Back-calculate:</span>
-0.1 = 225w / (128 × 4000)
-w = <span class="val">0.1 × 128 × 4000 / 225 = 227.56 kN/m</span></div>
-      </div>
-
-      <div>
-        <div class="inner-label">Previous Questions</div>
-        <table class="q-table" style="border:1px solid var(--t6b);border-radius:8px;overflow:hidden">
-          <thead><tr><th>Q#</th><th>Year / Exam</th><th>Question</th><th>Type</th></tr></thead>
-          <tbody>
-            <tr>
-              <td class="q-num">Q8</td>
-              <td class="q-year">2015 Fall</td>
-              <td class="q-text">Stepped EI beam (2EI + EI): 4m + 1.5m. UDL w kN/m on full span. EI = 4000 kN·m². Find w such that deflection at free end does not exceed 100mm. Verify using both moment area and conjugate beam.
-                <div class="q-tags"><span class="q-tag tag-beam">Stepped EI Overhang</span><span class="q-tag tag-load">UDL (unknown w)</span><span class="q-tag tag-find">Find w for Δ ≤ 100mm</span><span class="q-tag tag-method">Both Methods</span><span class="q-tag tag-special">Design Problem</span></div>
-              </td><td class="q-type">Numerical (Design)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tip-box" style="background:#130f00;border:1px solid var(--t6b)">
-        <span class="tip-icon">⚠️</span>
-        <span class="tip-text"><strong>Rare type but unique enough to reappear.</strong> Steps: (1) Find reactions in terms of w. (2) Draw M/EI with w in all ordinates. (3) Get Δ_C = expression in w. (4) Set = 0.1 m (not 100!). (5) Solve for w. Substitute EI numerically only at the last step. <strong>Answer: w = 227.56 kN/m.</strong></span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════════════════ THEORY SECTION ═══════════════════ -->
-  <div class="section-divider" id="theory">
-    <div class="section-divider-line"></div>
-    <div class="section-divider-text">Theory / Short Answer Questions</div>
-    <div class="section-divider-line"></div>
-  </div>
-
-  <div class="theory-card">
-    <div class="theory-header">
-      <div class="theory-q">Prove that shear force at any section of a conjugate beam equals the slope at the corresponding section of the real beam.</div>
-      <span class="theory-freq">2015 Fall · Derivation</span>
-    </div>
-    <div class="theory-body">
-      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Conjugate Beam Theory — Proof of Analogy</span></div>
-      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">The elastic curve equation EI d²y/dx² = M is mathematically identical to the conjugate beam equilibrium equation dV'/dx = −w' where w' = M/EI. Hence V' ↔ slope, M' ↔ deflection.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Start from Euler-Bernoulli beam equation. Show differential equation for elastic curve matches equilibrium equation for conjugate beam. State the analogy table clearly.</span></div>
-    </div>
-  </div>
-
-  <div class="theory-card">
-    <div class="theory-header">
-      <div class="theory-q">State and explain both theorems of the moment area method.</div>
-      <span class="theory-freq">Frequently implied · Conceptual</span>
-    </div>
-    <div class="theory-body">
-      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Moment Area Method — Theorems 1 and 2</span></div>
-      <div class="theory-row"><span class="theory-lbl">Theorem 1</span><span class="theory-val">The change in slope between two points A and B = Area of M/EI diagram between A and B.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Theorem 2</span><span class="theory-val">The tangential deviation of B from tangent at A = First moment of M/EI area between A and B, taken about B.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Draw a clear deflection curve. Mark tangent lines at A and B. Show θ_B/A geometrically and Δ_B/A with CG distance. Examiners expect the diagram — not just formula.</span></div>
-    </div>
-  </div>
-
-  <div class="theory-card">
-    <div class="theory-header">
-      <div class="theory-q">Explain the conjugate beam method. State the support conversion rules.</div>
-      <span class="theory-freq">Conceptual — base theory</span>
-    </div>
-    <div class="theory-body">
-      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Conjugate Beam Method — Concept + Support Rules</span></div>
-      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">A fictitious beam (conjugate) is loaded with the M/EI diagram of the real beam. Shear in conjugate beam = slope in real beam. Moment in conjugate beam = deflection in real beam.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Support rules</span><span class="theory-val">Pin→Pin · Roller→Roller · Fixed→Free · Free→Fixed · Internal Hinge→Internal Hinge</span></div>
-      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">Draw both real beam and conjugate beam side by side. Show support conversion clearly. This table is always worth 2–3 marks if asked.</span></div>
-    </div>
-  </div>
-
-  <div class="theory-card">
-    <div class="theory-header">
-      <div class="theory-q">State Macaulay's method. What is the advantage over the double integration method for discontinuous loads?</div>
-      <span class="theory-freq">Short answer type</span>
-    </div>
-    <div class="theory-body">
-      <div class="theory-row"><span class="theory-lbl">Topic</span><span class="theory-val">Macaulay's Method — Concept and Advantage</span></div>
-      <div class="theory-row"><span class="theory-lbl">Concept</span><span class="theory-val">Uses ⟨x−a⟩ bracket notation to write a SINGLE bending moment equation valid for the entire beam, regardless of load discontinuities. Integration is performed only once.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Advantage</span><span class="theory-val">For multiple loads or partial UDL, double integration requires separate M(x) for each region and matching boundary conditions at each junction. Macaulay's avoids this entirely with one equation.</span></div>
-      <div class="theory-row"><span class="theory-lbl">Exam hint</span><span class="theory-val">State the bracket rule: ⟨x−a⟩ = 0 when x &lt; a, and = (x−a) when x ≥ a. Give a short example with one point load.</span></div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════ MOST IMPORTANT ═══════════════════ -->
-  <div class="section-divider" id="most-imp">
-    <div class="section-divider-line"></div>
-    <div class="section-divider-text">Most Important Questions &amp; Patterns</div>
-    <div class="section-divider-line"></div>
-  </div>
-
-  <div class="mi-card">
-    <div class="mi-header"><span class="mi-icon">🔴</span><span class="mi-title">Most Repeated Numericals (Must Practice)</span></div>
-    <ul class="mi-list">
-      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q1 (2013 Fall)</strong> — Compound beam + 2 hinges + both methods. This IS the template for all Type 5 questions. If you master this, Q2, Q12 are straightforward.</span></li>
-      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q9 (2016 Spring) + Q17 (2022 Fall)</strong> — Both ask all 3 methods on a multi-span compound beam. University clearly loves this format. Expect a 3-method question in upcoming exams.</span></li>
-      <li class="mi-item"><span class="mi-bullet">★★</span><span class="mi-text"><strong>Q14 (2019 Fall)</strong> — Numerical EI with I = bd³/12. Appeared again as Q16 (2021). This sub-type is escalating in frequency. Compute I first, always.</span></li>
-      <li class="mi-item"><span class="mi-bullet">★</span><span class="mi-text"><strong>Q4 and Q7 (2015 Fall + Spring)</strong> — Identical overhang configuration. University reused same problem in same academic year. Very likely template for future overhang questions.</span></li>
-      <li class="mi-item"><span class="mi-bullet">★</span><span class="mi-text"><strong>Q5 (2015 Fall)</strong> — Partial UDL with Macaulay's. Only Macaulay's question in the set — but it contains the extension trick that must be memorized separately.</span></li>
-    </ul>
-  </div>
-
-  <div class="mi-card">
-    <div class="mi-header"><span class="mi-icon">🟡</span><span class="mi-title">High Probability — Likely in Upcoming Exams</span></div>
-    <ul class="mi-list">
-      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Type 5 compound beam with 3 methods</strong> — Q9 (2016) and Q17 (2022) both do this. Alternating pattern suggests this format returns in 2024 Fall or 2025.</span></li>
-      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Numerical EI (Type 3 with given E and dimensions)</strong> — Appeared 2019 and 2021. Very high chance of appearing again. Practice I = bd³/12 computation cold.</span></li>
-      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Type 5 with stepped EI</strong> — Q15 (2020 Fall) combined compound + stepped. This harder hybrid is becoming more common.</span></li>
-      <li class="mi-item"><span class="mi-bullet">→</span><span class="mi-text"><strong>Proof/derivation of conjugate beam analogy</strong> — Q4 (2015 Fall) asked this directly as theory. If not asked as standalone, it is implied in every numerical.</span></li>
-    </ul>
-  </div>
-
-  <div class="mi-card">
-    <div class="mi-header"><span class="mi-icon">🔵</span><span class="mi-title">Mixed-Concept / Cross-Topic Questions</span></div>
-    <ul class="mi-list">
-      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q13 (2018 Spring)</strong> — Overhang + varying UDL + mid-span deflection. Crosses Type 4 (overhang) with non-standard M/EI shape requiring integration. Hardest Type 4 question.</span></li>
-      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q15 (2020 Fall)</strong> — Compound beam + stepped EI. Crosses Type 5 (compound/hinge) with Type 3 (stepped EI). Both EI scaling and FBD split needed simultaneously.</span></li>
-      <li class="mi-item"><span class="mi-bullet">⊕</span><span class="mi-text"><strong>Q10 (2017 Fall)</strong> — Overhang + stepped EI + both methods. Crosses Type 3 and Type 4. Verifying same answer by two methods is a skill tested here.</span></li>
-    </ul>
-  </div>
-
-  <div class="mi-card">
-    <div class="mi-header"><span class="mi-icon">⚠️</span><span class="mi-title">Trap Questions — Common Student Mistakes</span></div>
-    <ul class="mi-list">
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Using uniform EI on stepped beam (Type 3):</strong> Divide each span's BM by its OWN local EI — not a single EI. This mistake loses all marks for M/EI diagram.</span></li>
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Conjugate beam support at free end of overhang:</strong> Students wrongly think free end becomes fixed. For overhang free end — it stays free (NOT fixed). Fixed↔Free only applies to cantilever base/tip.</span></li>
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Dropping Macaulay brackets mid-integration:</strong> Rule is absolute — keep ALL bracket terms through both integrations. Only drop (set =0) when substituting the final x value at the very last step.</span></li>
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Setting V'=0 at internal hinge (Type 5):</strong> Moment M' = 0 at hinge (not shear). Shear V' transfers and is definitely NOT zero. This is the most common conceptual error in Type 5.</span></li>
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Unit conversion in numerical EI questions:</strong> E in N/mm² must be converted to kN/m² (×10³). I in mm⁴ must be converted to m⁴ (×10⁻¹²). Forgetting conversion gives EI off by factor of 10⁹.</span></li>
-      <li class="mi-item"><span class="mi-bullet">!</span><span class="mi-text"><strong>Not converting final deflection to mm:</strong> Q14 and Q16 ask for answer in mm. Deflection from formula is in metres — multiply by 1000. Forgetting this loses the final mark.</span></li>
-    </ul>
-  </div>
-
-  <!-- PRIORITY SUMMARY TABLE -->
-  <div class="section-divider">
-    <div class="section-divider-line"></div>
-    <div class="section-divider-text">Priority Study Order</div>
-    <div class="section-divider-line"></div>
-  </div>
-
-  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:2rem">
-    <table class="sum-table">
-      <thead><tr><th>Study Order</th><th>Type</th><th>Pattern</th><th>Questions</th><th>Years</th><th>Priority</th></tr></thead>
-      <tbody>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn first</td>
-          <td style="font-weight:600;color:var(--t1)">Type 1</td>
-          <td style="color:var(--text2)">SSB, uniform EI, double integration</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q3, Q6</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
-          <td><span class="priority-pill" style="background:var(--t1b);color:var(--t1)">Low</span></td>
-        </tr>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn second</td>
-          <td style="font-weight:600;color:var(--t2)">Type 2</td>
-          <td style="color:var(--text2)">Multiple/partial loads, Macaulay's</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q5</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
-          <td><span class="priority-pill" style="background:var(--t2b);color:var(--t2)">Medium</span></td>
-        </tr>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn third</td>
-          <td style="font-weight:600;color:var(--t3)">Type 3</td>
-          <td style="color:var(--text2)">Stepped EI, moment area / conjugate</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q3,Q6,Q10,Q14,Q16</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015→2021</td>
-          <td><span class="priority-pill" style="background:var(--t3b);color:var(--t3)">High ★</span></td>
-        </tr>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">Learn fourth</td>
-          <td style="font-weight:600;color:var(--t4)">Type 4</td>
-          <td style="color:var(--text2)">Overhang beam, free end slope/deflection</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q4,Q7,Q13,Q16</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015→2021</td>
-          <td><span class="priority-pill" style="background:var(--t4b);color:var(--t4)">High ★</span></td>
-        </tr>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">★ Master this</td>
-          <td style="font-weight:600;color:var(--t5)">Type 5</td>
-          <td style="color:var(--text2)">Compound beam, internal hinge, FBD split</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q1,Q2,Q9,Q11,Q12,Q15,Q17</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2013→2022</td>
-          <td><span class="priority-pill" style="background:var(--t5b);color:var(--t5)">Very High ★★</span></td>
-        </tr>
-        <tr>
-          <td style="font-family:var(--mono);color:var(--text3);font-size:11px">If time allows</td>
-          <td style="font-weight:600;color:var(--t6)">Type 6</td>
-          <td style="color:var(--text2)">Design problem, find w for Δ limit</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">Q8</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">2015</td>
-          <td><span class="priority-pill" style="background:var(--t6b);color:var(--t6)">Rare</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
 </body>
 </html>
