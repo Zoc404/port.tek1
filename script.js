@@ -1,4 +1,59 @@
-const hamburger = document.getElementById('hamburger');
+// ---- Live clock ----
+  function updateClock(){
+    const now = new Date();
+    const dateEl = document.querySelector('.clock-date');
+    const timeEl = document.querySelector('.clock-time');
+    if (dateEl) dateEl.textContent = now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ---- Page view counter ----
+  // Tries two free counting services in order, then falls back to a
+  // local (per-browser) counter so the number is never stuck on "—".
+  // IMPORTANT: change 'tekrajjoshi1-portfolio' below to something unique
+  // to you once you host this for real, so your count is your own.
+  (function initViewCounter(){
+    const NAMESPACE = 'tekrajjoshi1-portfolio';
+    const KEY = 'views';
+    const el = document.getElementById('viewCount');
+    const wrap = document.getElementById('viewCounter');
+
+    function showCount(n){
+      if (!el) return;
+      el.textContent = Number(n).toLocaleString();
+      if (wrap) {
+        wrap.classList.add('pop');
+        setTimeout(() => wrap.classList.remove('pop'), 600);
+      }
+    }
+
+    function localFallback(){
+      try {
+        const stored = parseInt(localStorage.getItem('trj_local_views') || '0', 10);
+        const next = stored + 1;
+        localStorage.setItem('trj_local_views', String(next));
+        showCount(next);
+      } catch (e) {
+        if (el) el.textContent = '—';
+      }
+    }
+
+    // Service 1: CounterAPI v1
+    fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/up`)
+      .then(r => { if (!r.ok) throw new Error('counterapi.dev failed'); return r.json(); })
+      .then(data => showCount(data.count))
+      .catch(() => {
+        // Service 2: CountAPI
+        fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+          .then(r => { if (!r.ok) throw new Error('countapi.xyz failed'); return r.json(); })
+          .then(data => showCount(data.value))
+          .catch(localFallback);
+      });
+  })();
+
+  const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
   hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('open');
@@ -46,6 +101,11 @@ const hamburger = document.getElementById('hamburger');
         card.style.display = (f === 'all' || card.dataset.cat === f) ? 'flex' : 'none';
       });
     });
+  });
+
+  // Ensures :active/:hover detail reveal works reliably on touch devices (iOS Safari fix)
+  document.querySelectorAll('.placeholder-card.has-detail').forEach(card => {
+    card.addEventListener('touchstart', () => {}, { passive: true });
   });
 
   const tlEl = document.querySelector('.timeline');
