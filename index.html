@@ -16,6 +16,15 @@
 <meta name="twitter:title" content="Tek Raj Joshi | Civil Engineer">
 <meta name="twitter:description" content="Civil Engineer | AI & Technology | Entrepreneurship | Portfolio of Tek Raj Joshi">
 
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+<meta name="theme-color" content="#0a0e14">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -98,7 +107,7 @@
         <div class="terminal-body">
           <span class="t-line"><span class="t-prompt">$ </span>tek --whoami</span>
           <span class="t-line"><span class="t-key">Name       </span><span class="t-val">: Tek Raj Joshi</span></span>
-          <span class="t-line"><span class="t-key">Field      </span><span class="t-val">: Civil Engineering</span></span>
+          <span class="t-line"><span class="t-key">Field      </span><span class="t-val">: Er. Civil Engineering</span></span>
           <span class="t-line"><span class="t-key">University </span><span class="t-val">: Pokhara University</span></span>
           <span class="t-line"><span class="t-key">Origin     </span><span class="t-val">: Sudurpashchim, Nepal</span></span>
           <span class="t-line">&nbsp;</span>
@@ -230,21 +239,25 @@
   <h2 class="section-title reveal">Skills &<br><span class="grad-text">Toolbox.</span></h2>
   <p class="section-sub reveal">Tools I trust. Results I stand behind.</p>
 
-  <div class="prof-bars">
+  <div class="prof-bars glow-border">
+    <div class="prof-header"><span class="live-dot"></span> Live Proficiency</div>
     <div class="prof-row reveal">
+      <svg class="icon prof-icon"><use href="#ic-building"/></svg>
       <span class="prof-name">ETABS</span>
-      <div class="prof-track"><div class="prof-fill" data-pct="50"></div></div>
-      <span class="prof-pct">50%</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="50"><div class="prof-fill-shimmer"></div><div class="prof-tip"></div></div></div>
+      <span class="prof-pct" data-pct="50">0%</span>
     </div>
     <div class="prof-row reveal">
+      <svg class="icon prof-icon"><use href="#ic-compass"/></svg>
       <span class="prof-name">AutoCAD</span>
-      <div class="prof-track"><div class="prof-fill" data-pct="60"></div></div>
-      <span class="prof-pct">60%</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="60"><div class="prof-fill-shimmer"></div><div class="prof-tip"></div></div></div>
+      <span class="prof-pct" data-pct="60">0%</span>
     </div>
     <div class="prof-row reveal">
+      <svg class="icon prof-icon"><use href="#ic-toolbox"/></svg>
       <span class="prof-name">MS Office</span>
-      <div class="prof-track"><div class="prof-fill" data-pct="80"></div></div>
-      <span class="prof-pct">80%</span>
+      <div class="prof-track"><div class="prof-fill" data-pct="80"><div class="prof-fill-shimmer"></div><div class="prof-tip"></div></div></div>
+      <span class="prof-pct" data-pct="80">0%</span>
     </div>
   </div>
 
@@ -286,14 +299,20 @@
   </div>
 
   <div class="placeholder-grid" id="projectGrid">
-    <div class="placeholder-card reveal glow-card has-detail" data-cat="civil" tabindex="0">
-      <svg class="icon"><use href="#ic-diagram"/></svg>
-      <span class="placeholder-cat">Civil Engineering</span>
-      <div class="placeholder-title">Road Survey 2018</div>
-      <span class="tap-hint">tap to view</span>
-      <div class="card-detail">Conducted a college-level road survey project involving field measurements, route alignment, leveling, and survey data collection. Gained hands-on experience with road surveying techniques and teamwork.</div>
+    <div class="project-card reveal glow-card" data-cat="civil">
+      <div class="project-card-head"><svg class="icon"><use href="#ic-diagram"/></svg><span class="project-card-cat">Civil Engineering</span></div>
+      <div class="project-card-title">Road Survey — 2018</div>
+      <p class="project-card-desc">College-level road survey project covering field measurements, route alignment, leveling, and survey data collection — hands-on experience with road surveying techniques and teamwork.</p>
     </div>
-    <div class="placeholder-card reveal glow-card" data-cat="opensource"><svg class="icon"><use href="#ic-diagram"/></svg><span class="placeholder-cat">Open Source</span><div class="placeholder-title">Add project</div></div>
+
+    <div class="project-card reveal glow-card" data-cat="opensource">
+      <div class="project-card-head"><svg class="icon"><use href="#ic-diagram"/></svg><span class="project-card-cat">Open Source</span></div>
+      <div class="project-card-title">Smart Habit Tracker</div>
+      <p class="project-card-desc">A personal habit-tracking app built to log daily routines and visualize consistency over time.</p>
+      <!-- Replace the href below with your actual Google Drive share link -->
+      <a href="#" target="_blank" class="project-card-link"><svg class="icon"><use href="#ic-external"/></svg> View on Google Drive</a>
+    </div>
+
     <div class="placeholder-card reveal glow-card" data-cat="civil"><svg class="icon"><use href="#ic-diagram"/></svg><span class="placeholder-cat">Civil Engineering</span><div class="placeholder-title">Add project</div></div>
   </div>
 </section>
@@ -304,19 +323,46 @@
   <h2 class="section-title reveal">Let's Work<br><span class="grad-text">Together.</span></h2>
   <p class="section-sub reveal">Have a question, idea, or collaboration in mind? Reach out.</p>
 
-  <div class="contact-channels">
-    <a href="mailto:tek.r.joshi1@gmail.com" class="contact-channel reveal">
-      <div class="ch-icon"><svg class="icon"><use href="#ic-mail"/></svg></div>
-      <div><div class="ch-label">Email</div><div class="ch-value">tek.r.joshi1@gmail.com</div></div>
-    </a>
-    <a href="https://www.linkedin.com/in/tekrajjoshi1/" class="contact-channel reveal">
-      <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">in</div>
-      <div><div class="ch-label">LinkedIn</div><div class="ch-value">tekrajjoshi1</div></div>
-    </a>
-    <a href="#" class="contact-channel reveal">
-      <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">GH</div>
-      <div><div class="ch-label">GitHub</div><div class="ch-value">Add your GitHub link</div></div>
-    </a>
+  <div class="contact-grid-2">
+    <div class="contact-channels">
+      <a href="mailto:tek.r.joshi1@gmail.com" class="contact-channel reveal">
+        <div class="ch-icon"><svg class="icon"><use href="#ic-mail"/></svg></div>
+        <div><div class="ch-label">Email</div><div class="ch-value">tek.r.joshi1@gmail.com</div></div>
+      </a>
+      <a href="https://www.linkedin.com/in/tekrajjoshi1/" class="contact-channel reveal">
+        <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">in</div>
+        <div><div class="ch-label">LinkedIn</div><div class="ch-value">tekrajjoshi1</div></div>
+      </a>
+      <a href="#" class="contact-channel reveal">
+        <div class="ch-icon" style="font-family:var(--font-mono);font-weight:600;">GH</div>
+        <div><div class="ch-label">GitHub</div><div class="ch-value">Add your GitHub link</div></div>
+      </a>
+    </div>
+
+    <form class="contact-form reveal glow-border" id="contactForm">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" placeholder="Your Name" required>
+        </div>
+        <div class="form-field">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="you@email.com" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="cf-subject">Subject</label>
+        <input type="text" id="cf-subject" name="subject" placeholder="What's this about?" required>
+      </div>
+      <div class="form-field">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about your project, question, or idea..." required></textarea>
+      </div>
+      <button type="submit" class="btn-fill form-submit">
+        <span class="live-dot"></span> Send Message
+      </button>
+      <p class="form-note" id="formNote">Opens your email app with this message pre-filled.</p>
+    </form>
   </div>
 </section>
 
