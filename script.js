@@ -77,6 +77,17 @@
     });
   });
 
+  function animateCount(el, target, duration){
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(eased * target) + '%';
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
   const revealEls = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -85,13 +96,18 @@
         e.target.querySelectorAll('.prof-fill').forEach(bar => {
           bar.style.width = bar.dataset.pct + '%';
         });
+        e.target.querySelectorAll('.prof-pct[data-pct]').forEach(pct => {
+          if (pct.dataset.animated) return;
+          pct.dataset.animated = 'true';
+          animateCount(pct, parseInt(pct.dataset.pct, 10), 1300);
+        });
       }
     });
   }, { threshold: 0.15 });
   revealEls.forEach(el => observer.observe(el));
 
   const filterBtns = document.querySelectorAll('.filter-btn');
-  const projectCards = document.querySelectorAll('#projectGrid .placeholder-card');
+  const projectCards = document.querySelectorAll('#projectGrid > [data-cat]');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
@@ -103,10 +119,24 @@
     });
   });
 
-  // Ensures :active/:hover detail reveal works reliably on touch devices (iOS Safari fix)
-  document.querySelectorAll('.placeholder-card.has-detail').forEach(card => {
-    card.addEventListener('touchstart', () => {}, { passive: true });
-  });
+  // ---- Contact form (static site: opens the visitor's email client with the message pre-filled) ----
+  // For real inline form delivery without opening an email app, connect this
+  // form to a service like Formspree or Getform (no backend code needed).
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('cf-name').value.trim();
+      const email = document.getElementById('cf-email').value.trim();
+      const subject = document.getElementById('cf-subject').value.trim();
+      const message = document.getElementById('cf-message').value.trim();
+      const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      const mailto = `mailto:tek.r.joshi1@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+      const note = document.getElementById('formNote');
+      if (note) note.textContent = 'Opening your email app…';
+    });
+  }
 
   const tlEl = document.querySelector('.timeline');
   const tlProgress = document.getElementById('tlProgress');
