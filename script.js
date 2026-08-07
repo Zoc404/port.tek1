@@ -109,12 +109,25 @@
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('#projectGrid > [data-cat]');
   filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 1.4;
+      const ripple = document.createElement('span');
+      ripple.className = 'filter-ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+      btn.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const f = btn.dataset.filter;
       projectCards.forEach(card => {
-        card.style.display = (f === 'all' || card.dataset.cat === f) ? 'flex' : 'none';
+        const show = f === 'all' || card.dataset.cat === f;
+        card.style.opacity = show ? '1' : '0';
+        card.style.transform = show ? 'scale(1)' : 'scale(0.95)';
+        setTimeout(() => { card.style.display = show ? 'flex' : 'none'; }, show ? 0 : 200);
       });
     });
   });
@@ -137,6 +150,22 @@
       if (note) note.textContent = 'Opening your email app…';
     });
   }
+
+  // ---- About photo parallax on scroll ----
+  const aboutPhoto = document.getElementById('aboutPhoto');
+  let aboutTicking = false;
+  function updateAboutParallax(){
+    aboutTicking = false;
+    if (!aboutPhoto) return;
+    const rect = aboutPhoto.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const center = rect.top + rect.height / 2;
+    const offset = (vh / 2 - center) * 0.08;
+    aboutPhoto.style.transform = `translateY(${offset}px)`;
+  }
+  window.addEventListener('scroll', () => { if (!aboutTicking) { aboutTicking = true; requestAnimationFrame(updateAboutParallax); } });
+  window.addEventListener('resize', updateAboutParallax);
+  updateAboutParallax();
 
   const tlEl = document.querySelector('.timeline');
   const tlProgress = document.getElementById('tlProgress');
