@@ -34,10 +34,19 @@
   ::-webkit-scrollbar-track{background:var(--bg);}
   ::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan-dim),var(--amber));border-radius:10px;}
 
-  .orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.35;}
-  .orb-cyan{width:380px;height:380px;background:var(--cyan);top:-100px;right:-80px;animation:floatY 9s ease-in-out infinite;}
-  .orb-amber{width:300px;height:300px;background:var(--amber);bottom:-60px;left:-80px;opacity:0.18;animation:floatY 11s ease-in-out infinite reverse;}
+  /* Radial-gradient orbs: color itself fades to 0 alpha well inside the box,
+     so when a section clips it with overflow:hidden there's no visible
+     rectangular edge — only blur(90px) + a hard-edged circle showed a hard
+     box outline where the section clipped the blur spread. */
+  .orb{position:absolute;border-radius:50%;filter:blur(15px);pointer-events:none;z-index:0;}
+  .orb-cyan{width:620px;height:620px;top:-100px;right:-80px;
+    background:radial-gradient(circle, rgba(56,211,245,0.42) 0%, rgba(56,211,245,0.16) 32%, rgba(56,211,245,0.05) 55%, rgba(56,211,245,0) 74%);
+    animation:floatY 9s ease-in-out infinite, orbPulse 6s ease-in-out infinite;}
+  .orb-amber{width:520px;height:520px;bottom:-60px;left:-80px;
+    background:radial-gradient(circle, rgba(245,165,36,0.3) 0%, rgba(245,165,36,0.12) 32%, rgba(245,165,36,0.04) 55%, rgba(245,165,36,0) 74%);
+    animation:floatY 11s ease-in-out infinite reverse, orbPulse 7.5s ease-in-out infinite reverse;}
   @keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-30px);}}
+  @keyframes orbPulse{0%,100%{opacity:0.7;}50%{opacity:1;}}
 
   .glow-card{transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;}
   .glow-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(56,211,245,0.15);}
@@ -185,11 +194,93 @@
   .section-label-live{display:inline-flex;align-items:center;}
   .about-img-wrap{will-change:transform;}
 
+  /* ---------- reusable "live" glow accents, same treatment as About, ---------- */
+  /* ---------- varied per section so the page doesn't feel copy-pasted ---------- */
+  .live-dot-cyan{background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
+  .live-dot-amber{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+  .glow-underline{position:relative;display:inline-block;}
+  .glow-underline::after{content:"";position:absolute;left:0;bottom:-12px;height:3px;border-radius:2px;animation:scanBar 2.4s ease-in-out infinite;}
+  .glow-underline.glow-cyan-green::after{background:linear-gradient(90deg,var(--cyan),#3ecf6e);box-shadow:0 0 12px rgba(56,211,245,0.5);animation-duration:3s;}
+  .glow-underline.glow-amber-cyan::after{background:linear-gradient(90deg,var(--amber),var(--cyan));box-shadow:0 0 12px rgba(245,165,36,0.5);animation-duration:2.8s;}
+  .glow-underline.glow-green-cyan::after{background:linear-gradient(90deg,#3ecf6e,var(--cyan));box-shadow:0 0 12px rgba(62,207,110,0.5);animation-duration:2.2s;}
+  .glow-underline.glow-amber-green::after{background:linear-gradient(90deg,var(--amber),#3ecf6e);box-shadow:0 0 12px rgba(245,165,36,0.5);animation-duration:3.2s;}
+  .glow-underline.glow-green-amber::after{background:linear-gradient(90deg,#3ecf6e,var(--amber));box-shadow:0 0 12px rgba(62,207,110,0.5);animation-duration:2.6s;}
+
   .interest-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:28px;perspective:900px;}
-  .interest-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transform-style:preserve-3d;transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;cursor:default;}
-  .interest-card:hover{transform:rotateX(10deg) rotateY(-10deg) translateY(-6px) scale(1.05);box-shadow:0 16px 32px rgba(56,211,245,0.18);border-color:var(--cyan-dim);}
-  .interest-icon-lg{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--cyan);font-size:0.95rem;transition:transform .35s ease;}
+  .interest-card{background:var(--surface);border-radius:10px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;transform-style:preserve-3d;transition:transform .35s ease, box-shadow .35s ease;cursor:default;}
+  .interest-card:hover{transform:rotateX(10deg) rotateY(-10deg) translateY(-6px) scale(1.05);box-shadow:0 16px 32px rgba(56,211,245,0.18);}
+  /* idle rotating glow-border, staggered per card so all six don't spin in lockstep */
+  .interest-card.glow-border::before{animation-duration:5s;}
+  .interest-card:nth-child(1).glow-border::before{animation-delay:0s;}
+  .interest-card:nth-child(2).glow-border::before{animation-delay:-.8s;}
+  .interest-card:nth-child(3).glow-border::before{animation-delay:-1.6s;}
+  .interest-card:nth-child(4).glow-border::before{animation-delay:-2.4s;}
+  .interest-card:nth-child(5).glow-border::before{animation-delay:-3.2s;}
+  .interest-card:nth-child(6).glow-border::before{animation-delay:-4s;}
+  .interest-icon-lg{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--cyan);font-size:0.95rem;transition:transform .35s ease, color .35s ease;animation:iconPulse 2.6s ease-in-out infinite;}
   .interest-card:hover .interest-icon-lg{transform:translateZ(18px) scale(1.08);color:var(--amber);}
+  .interest-card:nth-child(1) .interest-icon-lg{animation-delay:0s;}
+  .interest-card:nth-child(2) .interest-icon-lg{animation-delay:.2s;}
+  .interest-card:nth-child(3) .interest-icon-lg{animation-delay:.4s;}
+  .interest-card:nth-child(4) .interest-icon-lg{animation-delay:.6s;}
+  .interest-card:nth-child(5) .interest-icon-lg{animation-delay:.8s;}
+  .interest-card:nth-child(6) .interest-icon-lg{animation-delay:1s;}
+
+  /* ---------- per-card themed background "vibe" — sits behind icon/label, above the border ring ---------- */
+  .interest-card{position:relative;overflow:visible;}
+  .interest-card::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:0;pointer-events:none;opacity:0.85;transition:opacity .35s ease;}
+  .interest-card:hover::after{opacity:1;}
+  .interest-icon-lg,.interest-label{position:relative;z-index:1;}
+
+  /* Engineering — technical blueprint grid, slow drift */
+  .vibe-engineering::after{
+    background-image:linear-gradient(rgba(56,211,245,0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,211,245,0.12) 1px, transparent 1px);
+    background-size:10px 10px;
+    animation:vibeGridDrift 7s linear infinite;
+  }
+  @keyframes vibeGridDrift{from{background-position:0 0;}to{background-position:10px 10px;}}
+
+  /* AI & Tech — diagonal data-stream lines, quicker flow */
+  .vibe-tech::after{
+    background-image:repeating-linear-gradient(45deg, rgba(56,211,245,0.16) 0 2px, transparent 2px 10px);
+    animation:vibeTechFlow 3.2s linear infinite;
+  }
+  @keyframes vibeTechFlow{from{background-position:0 0;}to{background-position:10px 10px;}}
+
+  /* Entrepreneurship — rising diagonal light sweep (growth/launch feel) */
+  .vibe-entrepreneurship::after{
+    background:linear-gradient(115deg, transparent 40%, rgba(245,165,36,0.24) 50%, transparent 60%);
+    background-size:250% 250%;
+    animation:vibeSweep 3.4s ease-in-out infinite;
+  }
+  @keyframes vibeSweep{0%{background-position:120% 120%;}100%{background-position:-20% -20%;}}
+
+  /* Economics — scrolling market-hatch ticker */
+  .vibe-economics::after{
+    background-image:repeating-linear-gradient(115deg, rgba(245,165,36,0.14) 0 1.5px, transparent 1.5px 9px);
+    animation:vibeTicker 4s linear infinite;
+  }
+  @keyframes vibeTicker{from{background-position:0 0;}to{background-position:22px 0;}}
+
+  /* Geopolitics — slowly rotating radar/longitude spokes */
+  .vibe-geopolitics::after{
+    background-image:repeating-conic-gradient(rgba(56,211,245,0.16) 0deg 2deg, transparent 2deg 18deg);
+    animation:vibeRadarSpin 14s linear infinite;
+  }
+  @keyframes vibeRadarSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+  /* Travel — fast diagonal dashes (flight-path / motion feel) */
+  .vibe-travel::after{
+    background-image:repeating-linear-gradient(120deg, rgba(56,211,245,0.2) 0 6px, transparent 6px 14px);
+    animation:vibeDash 1.6s linear infinite;
+  }
+  @keyframes vibeDash{from{background-position:0 0;}to{background-position:-20px -20px;}}
+
+  @media(prefers-reduced-motion:reduce){
+    .vibe-engineering::after,.vibe-tech::after,.vibe-entrepreneurship::after,
+    .vibe-economics::after,.vibe-geopolitics::after,.vibe-travel::after{animation:none;}
+  }
   .interest-label{font-family:var(--font-display);font-weight:600;font-size:0.72rem;line-height:1.2;}
 
   .social-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px;}
@@ -297,6 +388,12 @@
   .project-card-link:hover{text-decoration:underline;}
   .project-card-link .icon{flex-shrink:0;transition:transform .2s ease;}
   .project-card-link:hover .icon{transform:translate(2px,-2px);}
+
+  /* ---------- status badge (e.g. "Archived") for cards with no live link ---------- */
+  .status-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-top:auto;align-self:flex-start;position:relative;z-index:1;}
+  .status-archived{color:var(--muted);border:1px solid var(--line);background:rgba(134,149,167,0.06);animation:archivedGlow 3s ease-in-out infinite;}
+  .status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);box-shadow:0 0 6px rgba(134,149,167,0.6);flex-shrink:0;animation:dotPulse 1.4s ease-in-out infinite;}
+  @keyframes archivedGlow{0%,100%{box-shadow:0 0 0 rgba(56,211,245,0);border-color:var(--line);}50%{box-shadow:0 0 12px rgba(56,211,245,0.18);border-color:var(--cyan-dim);}}
 
   .placeholder-card{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:30px;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;transition:border-color .3s ease, opacity .3s ease;animation:dashPulse 2.6s ease-in-out infinite;}
   @keyframes dashPulse{0%,100%{border-color:var(--line);}50%{border-color:var(--cyan-dim);}}
