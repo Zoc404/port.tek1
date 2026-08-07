@@ -10,8 +10,10 @@
   setInterval(updateClock, 1000);
 
   // ---- Page view counter ----
-  // Tries two free counting services in order, then falls back to a
-  // local (per-browser) counter so the number is never stuck on "—".
+  // countapi.xyz (the old fallback service) has permanently shut down, so it
+  // is no longer used here. This now hits a single live, free, no-signup
+  // counter service, and only falls back to a local (per-browser) counter
+  // if that request fails for any reason — so the number is never stuck on "—".
   // IMPORTANT: change 'tekrajjoshi1-portfolio' below to something unique
   // to you once you host this for real, so your count is your own.
   (function initViewCounter(){
@@ -40,17 +42,11 @@
       }
     }
 
-    // Service 1: CounterAPI v1
-    fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/up`)
-      .then(r => { if (!r.ok) throw new Error('counterapi.dev failed'); return r.json(); })
-      .then(data => showCount(data.count))
-      .catch(() => {
-        // Service 2: CountAPI
-        fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
-          .then(r => { if (!r.ok) throw new Error('countapi.xyz failed'); return r.json(); })
-          .then(data => showCount(data.value))
-          .catch(localFallback);
-      });
+    // Live, free, no-signup counter service (countapi.xyz-compatible mirror).
+    fetch(`https://countapi.mileshilliard.com/api/v1/hit/${NAMESPACE}_${KEY}`)
+      .then(r => { if (!r.ok) throw new Error('counter service failed'); return r.json(); })
+      .then(data => showCount(data.value))
+      .catch(localFallback);
   })();
 
   const hamburger = document.getElementById('hamburger');
