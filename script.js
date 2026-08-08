@@ -186,3 +186,38 @@
   window.addEventListener('scroll', requestTimelineUpdate);
   window.addEventListener('resize', requestTimelineUpdate);
   updateTimeline();
+
+  // ---- Deep-linking for Research, Skills, and Projects cards ----
+  // Clicking a card updates the URL hash to that card's stable ID (shareable link).
+  // Loading a URL that already has one of these hashes (refresh, direct link,
+  // another device) scrolls to that exact card. Existing links/buttons inside
+  // cards are left untouched and still open normally on click.
+  (function initDeepLinks(){
+    const deepLinkCards = document.querySelectorAll('.research-card[id], .skill-card[id], .project-card[id]');
+
+    function scrollToDeepLink(hash, smooth){
+      if (!hash) return;
+      const id = decodeURIComponent(hash.replace('#', ''));
+      const el = document.getElementById(id);
+      if (el && deepLinkCards.length && Array.from(deepLinkCards).includes(el)) {
+        el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+      }
+    }
+
+    deepLinkCards.forEach(card => {
+      card.addEventListener('click', function(e){
+        if (e.target.closest('a, button')) return; // don't hijack existing links/buttons
+        if (history.pushState) {
+          history.pushState(null, '', '#' + card.id);
+        }
+      });
+    });
+
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        setTimeout(() => scrollToDeepLink(window.location.hash, false), 150);
+      }
+    });
+
+    window.addEventListener('hashchange', () => scrollToDeepLink(window.location.hash, true));
+  })();
