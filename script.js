@@ -195,6 +195,15 @@
   (function initDeepLinks(){
     const deepLinkCards = document.querySelectorAll('.research-card[id], .skill-card[id], .project-card[id]');
 
+    function getCardUrl(card){
+      return window.location.origin + window.location.pathname + '#' + card.id;
+    }
+
+    function getCardTitle(card){
+      const t = card.querySelector('.research-title, .skill-card-head h3, .project-card-title');
+      return (t ? t.textContent.trim() : document.title);
+    }
+
     function scrollToDeepLink(hash, smooth){
       if (!hash) return;
       const id = decodeURIComponent(hash.replace('#', ''));
@@ -220,4 +229,85 @@
     });
 
     window.addEventListener('hashchange', () => scrollToDeepLink(window.location.hash, true));
+
+    // ---- Mobile long-press to share (touch only; desktop/mouse behavior untouched) ----
+    function showShareToast(message){
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);' +
+        'background:rgba(17,24,35,0.95);color:#e7edf4;font-family:monospace;font-size:0.8rem;' +
+        'padding:10px 18px;border-radius:20px;border:1px solid rgba(56,211,245,0.35);' +
+        'box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:9999;opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;';
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)'; });
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 1800);
+    }
+
+    async function shareCard(card){
+      const url = getCardUrl(card);
+      const title = getCardTitle(card);
+      if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e){} }
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text: title, url });
+        } catch (err) {
+          // AbortError = user cancelled the native share sheet; ignore silently
+        }
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          showShareToast('Link copied — ready to share');
+        } catch (err) {
+          showShareToast(url);
+        }
+      } else {
+        showShareToast(url);
+      }
+    }
+
+    const LONG_PRESS_MS = 550;
+    const MOVE_CANCEL_PX = 12;
+
+    deepLinkCards.forEach(card => {
+      let pressTimer = null;
+      let startX = 0, startY = 0, longPressFired = false;
+
+      card.addEventListener('touchstart', function(e){
+        if (e.target.closest('a, button')) return; // let existing links/buttons behave normally
+        const touch = e.touches[0];
+        startX = touch.clientX; startY = touch.clientY;
+        longPressFired = false;
+        pressTimer = setTimeout(() => {
+          longPressFired = true;
+          shareCard(card);
+        }, LONG_PRESS_MS);
+      }, { passive: true });
+
+      card.addEventListener('touchmove', function(e){
+        if (!pressTimer) return;
+        const touch = e.touches[0];
+        const dx = Math.abs(touch.clientX - startX);
+        const dy = Math.abs(touch.clientY - startY);
+        if (dx > MOVE_CANCEL_PX || dy > MOVE_CANCEL_PX) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      }, { passive: true });
+
+      ['touchend', 'touchcancel'].forEach(evt => {
+        card.addEventListener(evt, function(){
+          if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+        }, { passive: true });
+      });
+
+      // Prevent the native long-press context menu on touch devices from
+      // interrupting the custom share gesture above.
+      card.addEventListener('contextmenu', function(e){
+        if (longPressFired) e.preventDefault();
+      });
+    });
   })();
