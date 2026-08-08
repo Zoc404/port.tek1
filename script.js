@@ -165,6 +165,90 @@
   window.addEventListener('resize', updateAboutParallax);
   updateAboutParallax();
 
+  // ---- Double-click / double-tap "like" heart burst on the about photo ----
+  // Desktop: native `dblclick` (fires reliably every time two clicks land
+  // close together — if you double-click repeatedly, you get one heart per
+  // dblclick). Mobile: manual double-tap detection on `touchend` using a
+  // time + distance window; once a double-tap has fired, continued rapid
+  // taps within that window each spawn another independent heart, so 5 fast
+  // taps = 5 hearts animating at once. CSS `touch-action:manipulation` on
+  // the photo (see the <style> block above) blocks the browser's native
+  // double-tap-zoom there without affecting scrolling elsewhere on the page.
+  (function initPhotoDoubleTapLike(){
+    const photo = document.getElementById('aboutPhoto');
+    if (!photo) return;
+
+    function offsetIn(el, clientX, clientY){
+      const rect = el.getBoundingClientRect();
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function rand(min, max){ return min + Math.random() * (max - min); }
+
+    function spawnHeart(x, y){
+      const heart = document.createElement('div');
+      heart.className = 'heart-pop';
+
+      const size = rand(38, 74);           // varied heart size
+      const dur = rand(900, 1450);         // varied pop-to-fade duration
+      const delay = rand(0, 70);           // tiny stagger for simultaneous hearts
+      const dx = rand(-60, 60);            // left/right drift while floating
+      const dy = -rand(120, 220);          // upward float distance
+      const rotA = rand(-18, 18);          // bounce wiggle
+      const rotB = rand(-14, 14);
+      const rotEnd = rand(-35, 35);        // rotation picked up during drift
+      const popScale = rand(1.15, 1.42);   // elastic overshoot on entrance
+      const endScale = rand(0.55, 0.85);   // slight shrink while fading
+
+      heart.style.left = x + 'px';
+      heart.style.top = y + 'px';
+      heart.style.width = size + 'px';
+      heart.style.height = size + 'px';
+      heart.style.animationDuration = dur.toFixed(0) + 'ms';
+      heart.style.animationDelay = delay.toFixed(0) + 'ms';
+      heart.style.setProperty('--dx', dx.toFixed(1) + 'px');
+      heart.style.setProperty('--dy', dy.toFixed(1) + 'px');
+      heart.style.setProperty('--rot-a', rotA.toFixed(1) + 'deg');
+      heart.style.setProperty('--rot-b', rotB.toFixed(1) + 'deg');
+      heart.style.setProperty('--rot-end', rotEnd.toFixed(1) + 'deg');
+      heart.style.setProperty('--pop-scale', popScale.toFixed(2));
+      heart.style.setProperty('--end-scale', endScale.toFixed(2));
+
+      heart.innerHTML = '<svg viewBox="0 0 24 24" fill="#ff2d55"><path d="M12 21s-6.7-4.35-9.3-8.1C.86 10.02 1.4 6.9 3.9 5.3c2.1-1.35 4.7-.85 6.1 1 .6.75 1.4 1.9 2 2.85.6-.95 1.4-2.1 2-2.85 1.4-1.85 4-2.35 6.1-1 2.5 1.6 3.04 4.72 1.2 7.6C18.7 16.65 12 21 12 21z"/></svg>';
+
+      photo.appendChild(heart);
+      heart.addEventListener('animationend', () => heart.remove());
+      // Safety net: if animationend never fires for any reason, don't leak nodes.
+      setTimeout(() => { if (heart.parentNode) heart.remove(); }, dur + delay + 400);
+    }
+
+    // Desktop / mouse — native double-click detection, always reliable
+    photo.addEventListener('dblclick', function(e){
+      e.preventDefault();
+      const p = offsetIn(photo, e.clientX, e.clientY);
+      spawnHeart(p.x, p.y);
+    });
+
+    // Touch devices — manual double-tap + rapid-tap-chain detection
+    let lastTapTime = 0;
+    let lastTapX = 0, lastTapY = 0;
+    photo.addEventListener('touchend', function(e){
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+      const p = offsetIn(photo, touch.clientX, touch.clientY);
+      const now = Date.now();
+      const dt = now - lastTapTime;
+      const dist = Math.hypot(p.x - lastTapX, p.y - lastTapY);
+      if (dt > 0 && dt < 320 && dist < 45) {
+        e.preventDefault(); // stop double-tap-to-zoom on this element
+        spawnHeart(p.x, p.y);
+      }
+      lastTapTime = now;
+      lastTapX = p.x;
+      lastTapY = p.y;
+    }, { passive: false });
+  })();
+
   const tlEl = document.querySelector('.timeline');
   const tlProgress = document.getElementById('tlProgress');
   const tlDot = document.getElementById('tlDot');
@@ -310,85 +394,4 @@
         if (longPressFired) e.preventDefault();
       });
     });
-  })();
-
-
-  // ---- Double-click / double-tap "like" heart burst on the about photo ----
-  // Unified via Pointer Events so one code path covers mouse, touch, and
-  // pen: a double-click/double-tap fires the first heart, and continued
-  // rapid taps each spawn their own independent, randomized heart (so 5
-  // fast taps = 5 hearts animating at once). CSS `touch-action:manipulation`
-  // on the photo (see style.css) blocks the browser's native double-tap-zoom
-  // there without affecting scrolling elsewhere on the page.
-  (function initPhotoDoubleTapLike(){
-    const photo = document.getElementById('aboutPhoto');
-    if (!photo) return;
-
-    const RAPID_MS = 380; // max gap between taps to count as "rapid"
-    let lastTapTime = 0;
-
-    function offsetIn(el, clientX, clientY){
-      const rect = el.getBoundingClientRect();
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-
-    function rand(min, max){ return min + Math.random() * (max - min); }
-
-    function spawnHeart(x, y){
-      const heart = document.createElement('div');
-      heart.className = 'heart-pop';
-
-      const size = rand(38, 74);           // varied heart size
-      const dur = rand(900, 1450);         // varied pop-to-fade duration
-      const delay = rand(0, 70);           // tiny stagger for simultaneous hearts
-      const dx = rand(-60, 60);            // left/right drift while floating
-      const dy = -rand(120, 220);          // upward float distance
-      const rotA = rand(-18, 18);          // bounce wiggle
-      const rotB = rand(-14, 14);
-      const rotEnd = rand(-35, 35);        // rotation picked up during drift
-      const popScale = rand(1.15, 1.42);   // elastic overshoot on entrance
-      const endScale = rand(0.55, 0.85);   // slight shrink while fading
-
-      heart.style.left = x + 'px';
-      heart.style.top = y + 'px';
-      heart.style.width = size + 'px';
-      heart.style.height = size + 'px';
-      heart.style.animationDuration = dur.toFixed(0) + 'ms';
-      heart.style.animationDelay = delay.toFixed(0) + 'ms';
-      heart.style.setProperty('--dx', dx.toFixed(1) + 'px');
-      heart.style.setProperty('--dy', dy.toFixed(1) + 'px');
-      heart.style.setProperty('--rot-a', rotA.toFixed(1) + 'deg');
-      heart.style.setProperty('--rot-b', rotB.toFixed(1) + 'deg');
-      heart.style.setProperty('--rot-end', rotEnd.toFixed(1) + 'deg');
-      heart.style.setProperty('--pop-scale', popScale.toFixed(2));
-      heart.style.setProperty('--end-scale', endScale.toFixed(2));
-
-      heart.innerHTML = '<svg viewBox="0 0 24 24" fill="#ff2d55"><path d="M12 21s-6.7-4.35-9.3-8.1C.86 10.02 1.4 6.9 3.9 5.3c2.1-1.35 4.7-.85 6.1 1 .6.75 1.4 1.9 2 2.85.6-.95 1.4-2.1 2-2.85 1.4-1.85 4-2.35 6.1-1 2.5 1.6 3.04 4.72 1.2 7.6C18.7 16.65 12 21 12 21z"/></svg>';
-
-      photo.appendChild(heart);
-      heart.addEventListener('animationend', () => heart.remove());
-    }
-
-    function handleTap(clientX, clientY){
-      const p = offsetIn(photo, clientX, clientY);
-      const now = Date.now();
-      if (now - lastTapTime < RAPID_MS) spawnHeart(p.x, p.y);
-      lastTapTime = now;
-    }
-
-    if (window.PointerEvent) {
-      photo.addEventListener('pointerup', function(e){
-        if (e.pointerType !== 'mouse') e.preventDefault();
-        handleTap(e.clientX, e.clientY);
-      });
-    } else {
-      // Legacy fallback for browsers without Pointer Events support
-      photo.addEventListener('click', function(e){ handleTap(e.clientX, e.clientY); });
-      photo.addEventListener('touchend', function(e){
-        const t = e.changedTouches[0];
-        if (!t) return;
-        e.preventDefault();
-        handleTap(t.clientX, t.clientY);
-      }, { passive: false });
-    }
   })();
