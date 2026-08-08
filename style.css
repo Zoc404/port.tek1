@@ -286,7 +286,7 @@
   .tl-place{color:var(--muted);font-size:0.9rem;}
 
   /* ---------- research ---------- */
-  .research-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:26px 28px;margin-bottom:22px;transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;position:relative;overflow:hidden;}
+  .research-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:26px 28px;margin-bottom:22px;transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;position:relative;overflow:hidden;scroll-margin-top:100px;}
   .research-card:hover{border-color:var(--cyan-dim);transform:translateY(-5px);box-shadow:0 16px 40px rgba(56,211,245,0.12);}
   .research-card::after{content:"";position:absolute;top:0;left:0;width:55%;height:100%;background:linear-gradient(120deg, transparent, rgba(56,211,245,0.1), transparent);transform:translateX(-250%) skewX(-20deg);animation:shimmerSweep 7s ease-in-out infinite;pointer-events:none;}
   .research-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;position:relative;z-index:1;}
@@ -339,7 +339,7 @@
   .prof-row:nth-child(2) .prof-fill, .prof-row:nth-child(2) .prof-pct{animation-delay:.3s;}
   .prof-row:nth-child(3) .prof-fill, .prof-row:nth-child(3) .prof-pct{animation-delay:.6s;}
   .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
-  .skill-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;overflow:hidden;}
+  .skill-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;overflow:hidden;scroll-margin-top:100px;}
   .skill-card::after{content:"";position:absolute;top:0;left:0;width:55%;height:100%;background:linear-gradient(120deg, transparent, rgba(56,211,245,0.14), transparent);transform:translateX(-250%) skewX(-20deg);animation:shimmerSweep 5s ease-in-out infinite;pointer-events:none;will-change:transform;}
   .skill-card:nth-child(2)::after{animation-delay:1.2s;}
   .skill-card:nth-child(3)::after{animation-delay:2.4s;}
@@ -373,7 +373,7 @@
 
   .placeholder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;align-items:stretch;}
 
-  .project-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease, opacity .3s ease;}
+  .project-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease, opacity .3s ease;scroll-margin-top:100px;}
   .project-card::after{content:"";position:absolute;top:0;left:0;width:55%;height:100%;background:linear-gradient(120deg, transparent, rgba(56,211,245,0.12), transparent);transform:translateX(-250%) skewX(-20deg);animation:shimmerSweep 6s ease-in-out infinite;pointer-events:none;}
   .project-card-head{display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
   .project-card-head .icon{color:var(--cyan);font-size:1.2rem;flex-shrink:0;animation:iconPulse 2.6s ease-in-out infinite;}
