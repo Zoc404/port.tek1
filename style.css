@@ -185,7 +185,33 @@
 
   /* ---------- about ---------- */
   .about-grid{display:grid;grid-template-columns:0.8fr 1.2fr;gap:60px;align-items:center;}
-  .about-img-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/5;background:var(--surface);position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.5);}
+  .about-img-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/5;background:var(--surface);position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.5);touch-action:manipulation;}
+
+  /* ---------- double-click / double-tap "like" heart burst on the about photo ---------- */
+  /* Each heart is spawned by JS with randomized --dx/--dy/--rot-*/--pop-scale/
+     --end-scale/size/duration/delay custom properties, so simultaneous rapid
+     taps each animate independently and never look identical. Only
+     transform + opacity are animated, both GPU-accelerated. */
+  .heart-pop{
+    position:absolute;left:0;top:0;
+    pointer-events:none;z-index:6;
+    will-change:transform,opacity;
+    transform:translate(-50%,-50%) scale(0);
+    opacity:0;
+    animation-name:heartPop;
+    animation-timing-function:cubic-bezier(.17,.89,.32,1.25);
+    animation-fill-mode:forwards;
+  }
+  .heart-pop svg{display:block;width:100%;height:100%;filter:drop-shadow(0 4px 14px rgba(255,45,85,0.55));}
+  @keyframes heartPop{
+    0%{transform:translate(-50%,-50%) translate(0,0) scale(0) rotate(0deg);opacity:0;}
+    10%{transform:translate(-50%,-50%) translate(0,-4px) scale(var(--pop-scale,1.3)) rotate(var(--rot-a,-8deg));opacity:1;}
+    22%{transform:translate(-50%,-50%) translate(0,-10px) scale(.9) rotate(var(--rot-b,6deg));opacity:1;}
+    32%{transform:translate(-50%,-50%) translate(0,-16px) scale(1.05) rotate(0deg);opacity:1;}
+    78%{opacity:1;}
+    100%{transform:translate(-50%,-50%) translate(var(--dx,0px),var(--dy,-150px)) scale(var(--end-scale,.7)) rotate(var(--rot-end,15deg));opacity:0;}
+  }
+  @media(prefers-reduced-motion:reduce){.heart-pop{animation:none;opacity:0;}}
   .about-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
   .about-img-wrap::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(10,14,20,0.55));pointer-events:none;}
   .about-bio{color:var(--muted);margin-bottom:34px;}
