@@ -395,3 +395,30 @@
       });
     });
   })();
+
+  // ---- Scroll-spy: highlights the nav link for whichever section is
+  // currently in view, so the active state stays accurate as you scroll. ----
+  (function initScrollSpy(){
+    const sectionIds = ['hero','about','timeline','research','skills','projects','contact'];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    const navLinkEls = document.querySelectorAll('.nav-links a[href^="#"]');
+    const navEl = document.querySelector('nav');
+    if (!sections.length || !navLinkEls.length) return;
+
+    function update(){
+      let currentId = sections[0].id;
+      sections.forEach(sec => {
+        if (sec.getBoundingClientRect().top - 110 <= 0) currentId = sec.id;
+      });
+      navLinkEls.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+      });
+      if (navEl) navEl.classList.toggle('nav-scrolled', window.scrollY > 40);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); }
+    }, { passive: true });
+    update();
+  })();
