@@ -129,7 +129,9 @@
   @keyframes goldRotate{to{--gold-angle:360deg;}}
 
   /* ---------- nav ---------- */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:grid;grid-template-columns:auto minmax(90px,1fr) auto;align-items:center;gap:10px;padding:10px 8vw;background:rgba(10,14,20,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:grid;grid-template-columns:auto minmax(90px,1fr) auto;align-items:center;gap:10px;padding:10px 8vw;background:rgba(10,14,20,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:background .3s ease, backdrop-filter .3s ease, box-shadow .3s ease;}
+  nav.nav-scrolled{background:rgba(10,14,20,0.97);backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(0,0,0,0.45);}
+  section{scroll-margin-top:80px;}
   .nav-logo{display:flex;align-items:center;gap:10px;}
   .nav-right{display:flex;align-items:center;gap:6px;}
 
@@ -592,7 +594,8 @@
   </div>
   <div class="nav-right">
     <ul class="nav-links" id="navLinks">
-      <li><a href="#about" class="active">About</a></li>
+      <li><a href="#hero" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#timeline">Timeline</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -668,7 +671,7 @@
 
       <div class="social-row">
         <a href="https://www.linkedin.com/in/tekrajjoshi1/" target="_blank" class="social-badge glow-border" title="LinkedIn"><svg class="icon"><use href="#ic-linkedin"/></svg></a>
-        <a href="https://x.com/tekrajjoshi1" target="_blank" class="social-badge glow-border" title="X"><svg class="icon"><use href="#ic-twitter"/></svg></a>
+        <a href="https://x.com/tekrajjoshii" target="_blank" class="social-badge glow-border" title="X"><svg class="icon"><use href="#ic-twitter"/></svg></a>
         <a href="https://www.facebook.com" target="_blank" class="social-badge glow-border" title="Facebook"><svg class="icon"><use href="#ic-facebook"/></svg></a>
         <a href="https://www.instagram.com" target="_blank" class="social-badge glow-border" title="Instagram"><svg class="icon"><use href="#ic-instagram"/></svg></a>
         <a href="https://github.com" target="_blank" class="social-badge glow-border" title="GitHub"><svg class="icon"><use href="#ic-github"/></svg></a>
@@ -965,7 +968,7 @@
   <div>&copy; 2026 Tek Raj Joshi · Designed &amp; Built by Tek Raj Joshi</div>
   <div class="footer-social">
     <a href="https://www.linkedin.com/in/tekrajjoshi1/" target="_blank" class="social-badge glow-border" title="LinkedIn"><svg class="icon"><use href="#ic-linkedin"/></svg></a>
-    <a href="https://x.com/tekrajjoshi1" target="_blank" class="social-badge glow-border" title="X"><svg class="icon"><use href="#ic-twitter"/></svg></a>
+    <a href="https://x.com/tekrajjoshii" target="_blank" class="social-badge glow-border" title="X"><svg class="icon"><use href="#ic-twitter"/></svg></a>
     <a href="https://www.facebook.com" target="_blank" class="social-badge glow-border" title="Facebook"><svg class="icon"><use href="#ic-facebook"/></svg></a>
     <a href="https://www.instagram.com" target="_blank" class="social-badge glow-border" title="Instagram"><svg class="icon"><use href="#ic-instagram"/></svg></a>
     <a href="https://github.com" target="_blank" class="social-badge glow-border" title="GitHub"><svg class="icon"><use href="#ic-github"/></svg></a>
@@ -1369,6 +1372,33 @@
         if (longPressFired) e.preventDefault();
       });
     });
+  })();
+
+  // ---- Scroll-spy: highlights the nav link for whichever section is
+  // currently in view, so the active state stays accurate as you scroll. ----
+  (function initScrollSpy(){
+    const sectionIds = ['hero','about','timeline','research','skills','projects','contact'];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    const navLinkEls = document.querySelectorAll('.nav-links a[href^="#"]');
+    const navEl = document.querySelector('nav');
+    if (!sections.length || !navLinkEls.length) return;
+
+    function update(){
+      let currentId = sections[0].id;
+      sections.forEach(sec => {
+        if (sec.getBoundingClientRect().top - 110 <= 0) currentId = sec.id;
+      });
+      navLinkEls.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+      });
+      if (navEl) navEl.classList.toggle('nav-scrolled', window.scrollY > 40);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); }
+    }, { passive: true });
+    update();
   })();
 
 </script>
