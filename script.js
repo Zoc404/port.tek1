@@ -422,3 +422,40 @@
     }, { passive: true });
     update();
   })();
+
+  // ---- Scroll-to-top button: appears after scrolling past the hero,
+  // fills a progress ring around itself as the page scrolls, and smooth-
+  // scrolls back to the top on click with a small punch animation. ----
+  (function initScrollTopBtn(){
+    const btn = document.getElementById('scrollTopBtn');
+    const ring = document.getElementById('scrollRingProgress');
+    if (!btn) return;
+
+    const RADIUS = 22;
+    const CIRC = 2 * Math.PI * RADIUS; // ~138.23
+    const SHOW_AT = 420; // px scrolled before the button appears
+
+    function update(){
+      const scrollY = window.scrollY || window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(Math.max(scrollY / docHeight, 0), 1) : 0;
+      if (ring) ring.style.strokeDashoffset = String(CIRC * (1 - progress));
+      btn.classList.toggle('visible', scrollY > SHOW_AT);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); }
+    }, { passive: true });
+    window.addEventListener('resize', update);
+
+    btn.addEventListener('click', () => {
+      if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e){} }
+      btn.classList.remove('clicked');
+      void btn.offsetWidth; // restart animation if clicked again quickly
+      btn.classList.add('clicked');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    update();
+  })();
