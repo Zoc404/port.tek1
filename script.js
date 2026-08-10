@@ -1,3 +1,109 @@
+// ---- Flipbook viewer (Projects & Contributions section only) ----
+(function(){
+  let pdfjsReady, flipLibReady, pageFlip, zoom = 1, soundOn = true, audioCtx;
+  const overlay = document.getElementById('flipbookOverlay');
+  const root = document.getElementById('flipbookRoot');
+  const loading = document.getElementById('flipbookLoading');
+  const pageIndicator = document.getElementById('fbPageIndicator');
+
+  function loadScript(src){
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  function ensureLibs(){
+    if (!pdfjsReady) pdfjsReady = loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js').then(() => {
+      pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js';
+    });
+    if (!flipLibReady) flipLibReady = loadScript('https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js');
+    return Promise.all([pdfjsReady, flipLibReady]);
+  }
+  function playFlipSound(){
+    if (!soundOn) return;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'triangle'; o.frequency.value = 320;
+      g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(); o.stop(audioCtx.currentTime + 0.15);
+    }catch(e){}
+  }
+  async function renderPdfPages(url){
+    const pdf = await pdfjs.getDocument(url).promise;
+    const pages = [];
+    for (let i = 1; i <= pdf.numPages; i++){
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 1.6 });
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width; canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      const div = document.createElement('div');
+      div.className = 'page';
+      div.appendChild(canvas);
+      pages.push(div);
+    }
+    return pages;
+  }
+  window.openFlipbook = async function(url){
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    loading.style.display = 'block';
+    root.innerHTML = '';
+    zoom = 1; root.style.transform = 'scale(1)';
+    try{
+      await ensureLibs();
+      const pages = await renderPdfPages(url);
+      pages.forEach(p => root.appendChild(p));
+      pageFlip = new St.PageFlip(root, {
+        width: pages[0].querySelector('canvas').width / 1.6,
+        height: pages[0].querySelector('canvas').height / 1.6,
+        size: 'stretch', minWidth: 260, maxWidth: 900, minHeight: 360, maxHeight: 1200,
+        showCover: false, mobileScrollSupport: false, useMouseEvents: true, maxShadowOpacity: 0.5
+      });
+      pageFlip.loadFromHTML(root.querySelectorAll('.page'));
+      pageFlip.on('flip', (e) => { playFlipSound(); updatePageIndicator(); });
+      updatePageIndicator();
+    }catch(err){
+      loading.textContent = 'Could not load report. Please try again later.';
+      return;
+    }
+    loading.style.display = 'none';
+  };
+  function updatePageIndicator(){
+    if (!pageFlip) return;
+    pageIndicator.textContent = (pageFlip.getCurrentPageIndex() + 1) + ' / ' + pageFlip.getPageCount();
+  }
+  function closeFlipbook(){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (pageFlip) { try{ pageFlip.destroy(); }catch(e){} pageFlip = null; }
+    root.innerHTML = '';
+  }
+  document.getElementById('fbClose').addEventListener('click', closeFlipbook);
+  document.getElementById('fbPrev').addEventListener('click', () => pageFlip && pageFlip.flipPrev());
+  document.getElementById('fbNext').addEventListener('click', () => pageFlip && pageFlip.flipNext());
+  document.getElementById('fbZoomIn').addEventListener('click', () => { zoom = Math.min(zoom + 0.2, 2.4); root.style.transform = 'scale(' + zoom + ')'; });
+  document.getElementById('fbZoomOut').addEventListener('click', () => { zoom = Math.max(zoom - 0.2, 0.6); root.style.transform = 'scale(' + zoom + ')'; });
+  document.getElementById('fbSound').addEventListener('click', function(){
+    soundOn = !soundOn; this.textContent = soundOn ? '🔊' : '🔇'; this.classList.toggle('active', !soundOn);
+  });
+  document.getElementById('fbFullscreen').addEventListener('click', function(){
+    if (!document.fullscreenElement) overlay.requestFullscreen && overlay.requestFullscreen();
+    else document.exitFullscreen && document.exitFullscreen();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') closeFlipbook();
+    if (e.key === 'ArrowRight') pageFlip && pageFlip.flipNext();
+    if (e.key === 'ArrowLeft') pageFlip && pageFlip.flipPrev();
+  });
+  overlay.addEventListener('contextmenu', (e) => e.preventDefault());
+})();
+
 // ---- Live clock ----
   function updateClock(){
     const now = new Date();
