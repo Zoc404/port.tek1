@@ -488,6 +488,33 @@
   footer{border-top:1px solid var(--line);padding:30px 8vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);}
   .footer-social{display:flex;gap:14px;}
 
+  /* ---------- scroll-to-top button ---------- */
+  .scroll-top-btn{
+    position:fixed;right:24px;bottom:28px;width:52px;height:52px;z-index:90;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
+    color:var(--cyan);cursor:pointer;padding:0;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transform:translateY(26px) scale(.78);
+    transition:opacity .35s ease, transform .45s cubic-bezier(.34,1.56,.64,1), visibility .35s ease, box-shadow .3s ease, border-color .3s ease, background .3s ease;
+  }
+  .scroll-top-btn.visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);}
+  .scroll-top-btn:hover{border-color:var(--cyan-dim);background:var(--surface);box-shadow:0 12px 32px rgba(56,211,245,0.3);}
+  .scroll-top-btn:hover .scroll-top-icon{transform:translateY(-3px);}
+  .scroll-top-btn:active{transform:translateY(0) scale(.9);}
+  .scroll-top-btn.clicked{animation:scrollBtnPunch .45s ease;}
+  @keyframes scrollBtnPunch{0%{transform:scale(1);}35%{transform:scale(.82) rotate(-6deg);}100%{transform:scale(1);}}
+  .scroll-top-icon{width:20px;height:20px;position:relative;z-index:1;transition:transform .25s ease;}
+  .scroll-top-ring{position:absolute;inset:0;width:52px;height:52px;transform:rotate(-90deg);pointer-events:none;}
+  .scroll-top-ring .ring-track{fill:none;stroke:var(--line);stroke-width:2;}
+  .scroll-top-ring .ring-progress{fill:none;stroke:url(#scrollGrad);stroke-width:2;stroke-linecap:round;stroke-dasharray:138.23;stroke-dashoffset:138.23;}
+  @media(max-width:600px){
+    .scroll-top-btn{right:16px;bottom:20px;width:46px;height:46px;border-radius:14px;}
+    .scroll-top-ring{width:46px;height:46px;}
+    .scroll-top-icon{width:18px;height:18px;}
+  }
+
   @media(max-width:860px){
     .hero-inner, .about-grid{grid-template-columns:1fr;}
     .prof-row{grid-template-columns:22px 90px 1fr 44px;gap:10px;}
