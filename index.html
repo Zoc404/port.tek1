@@ -422,29 +422,18 @@
       <div class="project-card-head"><svg class="icon"><use href="#ic-compass"/></svg><span class="project-card-cat">Civil Engineering</span></div>
       <div class="project-card-title">Internship Report — 2026</div>
       <p class="project-card-desc">Civil Engineering internship at Water Supply &amp; Sanitation Division Office, Kailali, covering site supervision, BOQ and drawing review, quantity measurement, cost estimation, and field documentation.</p>
-      <a href="#" class="project-card-link" onclick="openFlipbook('report-images', 149);return false;"><svg class="icon"><use href="#ic-external"/></svg> View Full Report →</a>
+      <a href="#" class="project-card-link" onclick="openPdfViewer('documents/tekraj-joshi-civil-engineering-internship-report-wssdo-kailali.pdf.pdf');return false;"><svg class="icon"><use href="#ic-external"/></svg> View Full Report →</a>
     </div>
   </div>
 </section>
 
-<!-- ============= FLIPBOOK VIEWER (Projects section only) ============= -->
-<div id="flipbookOverlay" class="flipbook-overlay" aria-modal="true" role="dialog" aria-hidden="true">
-  <div class="flipbook-topbar">
-    <span class="flipbook-page-indicator" id="fbPageIndicator">— / —</span>
-    <div class="flipbook-controls">
-      <button type="button" class="fb-btn" id="fbZoomOut" title="Zoom out">−</button>
-      <button type="button" class="fb-btn" id="fbZoomIn" title="Zoom in">+</button>
-      <button type="button" class="fb-btn" id="fbSound" title="Toggle page-turn sound">🔊</button>
-      <button type="button" class="fb-btn" id="fbFullscreen" title="Fullscreen">⛶</button>
-      <button type="button" class="fb-btn fb-close" id="fbClose" title="Close">✕</button>
-    </div>
+<!-- ============= PDF VIEWER (Projects section only, hidden by default) ============= -->
+<div id="pdfViewerOverlay" class="pdf-viewer-overlay" aria-modal="true" role="dialog" aria-hidden="true">
+  <div class="pdf-viewer-topbar">
+    <span class="pdf-viewer-title">Internship Report — 2026</span>
+    <button type="button" class="pdf-viewer-close" id="pdfViewerClose" title="Close">✕</button>
   </div>
-  <div class="flipbook-stage">
-    <div id="flipbookLoading" class="flipbook-loading">Loading report…</div>
-    <div id="flipbookViewport" class="flipbook-viewport"><div id="flipbookRoot"></div></div>
-    <button type="button" class="fb-nav fb-prev" id="fbPrev" aria-label="Previous page">‹</button>
-    <button type="button" class="fb-nav fb-next" id="fbNext" aria-label="Next page">›</button>
-  </div>
+  <iframe id="pdfViewerFrame" class="pdf-viewer-frame" title="Internship Report PDF"></iframe>
 </div>
 
 <!-- ================= CONTACT ================= -->
