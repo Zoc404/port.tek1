@@ -1,6 +1,6 @@
 // ---- Flipbook viewer (Projects & Contributions section only) ----
 (function(){
-  let pdfjsReady, flipLibReady, pageFlip, zoom = 1, soundOn = true, audioCtx;
+  let flipLibReady, pageFlip, zoom = 1, soundOn = true, audioCtx;
   const overlay = document.getElementById('flipbookOverlay');
   const root = document.getElementById('flipbookRoot');
   const loading = document.getElementById('flipbookLoading');
@@ -14,11 +14,8 @@
     });
   }
   function ensureLibs(){
-    if (!pdfjsReady) pdfjsReady = loadScript('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js').then(() => {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-    });
     if (!flipLibReady) flipLibReady = loadScript('https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js');
-    return Promise.all([pdfjsReady, flipLibReady]);
+    return flipLibReady;
   }
   function playFlipSound(){
     if (!soundOn) return;
@@ -32,65 +29,46 @@
       o.start(); o.stop(audioCtx.currentTime + 0.15);
     }catch(e){}
   }
-  async function renderOnePage(pdf, i, scale){
-    const page = await pdf.getPage(i);
-    const viewport = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width; canvas.height = viewport.height;
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-    return canvas;
+  function loadImage(src){
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = src;
+    });
   }
-  window.openFlipbook = async function(url){
+  // imagesFolder/pageCount are set per-book; internship report uses 149 pre-converted JPGs
+  window.openFlipbook = async function(imagesFolder, pageCount){
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     loading.style.display = 'block';
     loading.textContent = 'Loading report…';
     root.innerHTML = '';
     zoom = 1; root.style.transform = 'scale(1)';
-    const SCALE = 1.3, PRELOAD = 4;
     try{
       await ensureLibs();
-      const pdf = await pdfjsLib.getDocument(url).promise;
-      const total = pdf.numPages;
+      const pad = n => String(n).padStart(3, '0');
+      const firstImg = await loadImage(`${imagesFolder}/page-${pad(1)}.jpg`);
       const divs = [];
-      for (let i = 1; i <= total; i++){
+      for (let i = 1; i <= pageCount; i++){
         const div = document.createElement('div');
-        div.className = 'page'; div.dataset.num = i;
+        div.className = 'page';
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.src = `${imagesFolder}/page-${pad(i)}.jpg`;
+        img.alt = 'Page ' + i;
+        div.appendChild(img);
         root.appendChild(div); divs.push(div);
       }
-      // render first few pages before showing the book
-      for (let i = 0; i < Math.min(PRELOAD, total); i++){
-        divs[i].appendChild(await renderOnePage(pdf, i + 1, SCALE));
-      }
-      const firstCanvas = divs[0].querySelector('canvas');
       pageFlip = new St.PageFlip(root, {
-        width: firstCanvas.width / SCALE, height: firstCanvas.height / SCALE,
+        width: firstImg.naturalWidth, height: firstImg.naturalHeight,
         size: 'stretch', minWidth: 260, maxWidth: 900, minHeight: 360, maxHeight: 1200,
         showCover: false, mobileScrollSupport: false, useMouseEvents: true, maxShadowOpacity: 0.5
       });
       pageFlip.loadFromHTML(root.querySelectorAll('.page'));
-      pageFlip.on('flip', () => { playFlipSound(); updatePageIndicator(); renderNearby(); });
+      pageFlip.on('flip', () => { playFlipSound(); updatePageIndicator(); });
       updatePageIndicator();
       loading.style.display = 'none';
-      // render the rest quietly in the background
-      let cursor = PRELOAD;
-      function renderNearby(){
-        if (!pageFlip) return;
-        const cur = pageFlip.getCurrentPageIndex();
-        for (let d = 0; d < 3; d++){
-          const idx = cur + d;
-          if (idx < total && !divs[idx].querySelector('canvas')){
-            renderOnePage(pdf, idx + 1, SCALE).then(c => divs[idx].appendChild(c));
-          }
-        }
-      }
-      (function backgroundFill(){
-        if (cursor >= total) return;
-        const idx = cursor++;
-        if (!divs[idx].querySelector('canvas')){
-          renderOnePage(pdf, idx + 1, SCALE).then(c => { divs[idx].appendChild(c); setTimeout(backgroundFill, 0); });
-        } else setTimeout(backgroundFill, 0);
-      })();
     }catch(err){
       loading.textContent = 'Could not load report. Please try again later.';
       return;
