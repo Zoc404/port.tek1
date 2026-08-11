@@ -410,18 +410,29 @@
   .project-card-link .icon{flex-shrink:0;transition:transform .2s ease;}
   .project-card-link:hover .icon{transform:translate(2px,-2px);}
 
-  /* ---------- pdf viewer (iframe, hidden by default) ---------- */
-  .pdf-viewer-overlay{position:fixed;inset:0;z-index:999;height:100dvh;background:rgba(6,9,14,0.92);backdrop-filter:blur(6px);display:none;flex-direction:column;}
+  /* ---------- pdf viewer (canvas render, view-only, hidden by default) ---------- */
+  .pdf-viewer-overlay{position:fixed;inset:0;z-index:999;height:100dvh;background:rgba(6,9,14,0.92);backdrop-filter:blur(6px);display:none;flex-direction:column;overflow:hidden;}
   .pdf-viewer-overlay.open{display:flex;}
-  .pdf-viewer-topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 5vw;border-bottom:1px solid var(--line);background:rgba(10,14,20,0.9);}
-  .pdf-viewer-title{font-family:var(--font-mono);font-size:0.85rem;color:var(--cyan);}
-  .pdf-viewer-close{font-family:var(--font-mono);font-size:0.95rem;width:38px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:#e0546b;cursor:pointer;transition:all .2s ease;}
+  .pdf-viewer-topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4vw;border-bottom:1px solid var(--line);background:rgba(10,14,20,0.9);}
+  .pdf-viewer-title{font-family:var(--font-mono);font-size:0.85rem;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pdfv-page-indicator{font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);white-space:nowrap;}
+  .pdf-viewer-close{font-family:var(--font-mono);font-size:0.95rem;width:38px;height:34px;flex:0 0 auto;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:#e0546b;cursor:pointer;transition:all .2s ease;}
   .pdf-viewer-close:hover{border-color:#e0546b;background:rgba(224,84,107,0.1);}
-  .pdf-viewer-frame{flex:1 1 auto;width:100%;height:100%;border:0;background:#fff;}
+  .pdfv-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;touch-action:pan-y;user-select:none;-webkit-user-select:none;}
+  .pdfv-loading{position:absolute;font-family:var(--font-mono);color:var(--muted);font-size:0.85rem;z-index:0;}
+  .pdfv-canvas{max-width:100%;max-height:100%;box-shadow:0 10px 40px rgba(0,0,0,0.5);background:#fff;pointer-events:none;}
+  .pdfv-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(17,24,35,0.85);color:var(--cyan);font-size:1.4rem;cursor:pointer;line-height:1;z-index:2;}
+  .pdfv-nav:hover{border-color:var(--cyan-dim);}
+  .pdfv-prev{left:10px;}
+  .pdfv-next{right:10px;}
   @media(max-width:640px){
-    .pdf-viewer-topbar{padding:10px 4vw;}
-    .pdf-viewer-title{font-size:0.75rem;}
+    .pdf-viewer-topbar{padding:8px 3vw;gap:8px;}
+    .pdf-viewer-title{font-size:0.72rem;}
+    .pdfv-page-indicator{font-size:0.7rem;}
     .pdf-viewer-close{width:34px;height:32px;font-size:0.85rem;}
+    .pdfv-nav{width:38px;height:38px;font-size:1.2rem;background:rgba(17,24,35,0.95);border-color:var(--cyan-dim);}
+    .pdfv-prev{left:4px;} .pdfv-next{right:4px;}
+    .pdfv-stage{padding:4px;}
   }
 
   /* ---------- status badge (e.g. "Archived") for cards with no live link ---------- */
