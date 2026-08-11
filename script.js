@@ -32,41 +32,65 @@
       o.start(); o.stop(audioCtx.currentTime + 0.15);
     }catch(e){}
   }
-  async function renderPdfPages(url){
-    const pdf = await pdfjsLib.getDocument(url).promise;
-    const pages = [];
-    for (let i = 1; i <= pdf.numPages; i++){
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 1.6 });
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width; canvas.height = viewport.height;
-      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      const div = document.createElement('div');
-      div.className = 'page';
-      div.appendChild(canvas);
-      pages.push(div);
-    }
-    return pages;
+  async function renderOnePage(pdf, i, scale){
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    return canvas;
   }
   window.openFlipbook = async function(url){
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     loading.style.display = 'block';
+    loading.textContent = 'Loading report…';
     root.innerHTML = '';
     zoom = 1; root.style.transform = 'scale(1)';
+    const SCALE = 1.3, PRELOAD = 4;
     try{
       await ensureLibs();
-      const pages = await renderPdfPages(url);
-      pages.forEach(p => root.appendChild(p));
+      const pdf = await pdfjsLib.getDocument(url).promise;
+      const total = pdf.numPages;
+      const divs = [];
+      for (let i = 1; i <= total; i++){
+        const div = document.createElement('div');
+        div.className = 'page'; div.dataset.num = i;
+        root.appendChild(div); divs.push(div);
+      }
+      // render first few pages before showing the book
+      for (let i = 0; i < Math.min(PRELOAD, total); i++){
+        divs[i].appendChild(await renderOnePage(pdf, i + 1, SCALE));
+      }
+      const firstCanvas = divs[0].querySelector('canvas');
       pageFlip = new St.PageFlip(root, {
-        width: pages[0].querySelector('canvas').width / 1.6,
-        height: pages[0].querySelector('canvas').height / 1.6,
+        width: firstCanvas.width / SCALE, height: firstCanvas.height / SCALE,
         size: 'stretch', minWidth: 260, maxWidth: 900, minHeight: 360, maxHeight: 1200,
         showCover: false, mobileScrollSupport: false, useMouseEvents: true, maxShadowOpacity: 0.5
       });
       pageFlip.loadFromHTML(root.querySelectorAll('.page'));
-      pageFlip.on('flip', (e) => { playFlipSound(); updatePageIndicator(); });
+      pageFlip.on('flip', () => { playFlipSound(); updatePageIndicator(); renderNearby(); });
       updatePageIndicator();
+      loading.style.display = 'none';
+      // render the rest quietly in the background
+      let cursor = PRELOAD;
+      function renderNearby(){
+        if (!pageFlip) return;
+        const cur = pageFlip.getCurrentPageIndex();
+        for (let d = 0; d < 3; d++){
+          const idx = cur + d;
+          if (idx < total && !divs[idx].querySelector('canvas')){
+            renderOnePage(pdf, idx + 1, SCALE).then(c => divs[idx].appendChild(c));
+          }
+        }
+      }
+      (function backgroundFill(){
+        if (cursor >= total) return;
+        const idx = cursor++;
+        if (!divs[idx].querySelector('canvas')){
+          renderOnePage(pdf, idx + 1, SCALE).then(c => { divs[idx].appendChild(c); setTimeout(backgroundFill, 0); });
+        } else setTimeout(backgroundFill, 0);
+      })();
     }catch(err){
       loading.textContent = 'Could not load report. Please try again later.';
       return;
