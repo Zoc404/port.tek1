@@ -411,26 +411,34 @@
   .project-card-link:hover .icon{transform:translate(2px,-2px);}
 
   /* ---------- flipbook viewer ---------- */
-  .flipbook-overlay{position:fixed;inset:0;z-index:999;background:rgba(6,9,14,0.92);backdrop-filter:blur(6px);display:none;flex-direction:column;}
+  .flipbook-overlay{position:fixed;inset:0;z-index:999;height:100dvh;background:rgba(6,9,14,0.92);backdrop-filter:blur(6px);display:none;flex-direction:column;overflow:hidden;}
   .flipbook-overlay.open{display:flex;}
-  .flipbook-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 5vw;border-bottom:1px solid var(--line);background:rgba(10,14,20,0.9);}
+  .flipbook-topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 5vw;border-bottom:1px solid var(--line);background:rgba(10,14,20,0.9);}
   .flipbook-page-indicator{font-family:var(--font-mono);font-size:0.8rem;color:var(--cyan);}
   .flipbook-controls{display:flex;gap:8px;flex-wrap:wrap;}
+  .flipbook-loading{position:absolute;font-family:var(--font-mono);color:var(--muted);font-size:0.85rem;z-index:1;}
   .fb-btn{font-family:var(--font-mono);font-size:0.85rem;width:38px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s ease;}
   .fb-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
   .fb-btn.active{border-color:var(--amber);color:var(--amber);}
+  .fb-close{font-size:1rem;}
   .fb-close:hover{border-color:#e0546b;color:#e0546b;}
-  .flipbook-stage{position:relative;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .flipbook-loading{position:absolute;font-family:var(--font-mono);color:var(--muted);font-size:0.85rem;}
-  .flipbook-viewport{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:auto;touch-action:pan-y;}
-  #flipbookRoot{transition:transform .25s ease;}
+  .flipbook-stage{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;}
+  .flipbook-viewport{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:pan-y;}
+  #flipbookRoot{transition:transform .25s ease;max-width:100%;max-height:100%;}
   #flipbookRoot .stf__parent{margin:auto;}
   #flipbookRoot canvas, #flipbookRoot img{display:block;width:100%;height:100%;max-width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.5);background:#fff;object-fit:contain;}
-  .fb-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(17,24,35,0.8);color:var(--cyan);font-size:1.4rem;cursor:pointer;line-height:1;}
+  .fb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:rgba(17,24,35,0.88);color:var(--cyan);font-size:1.5rem;cursor:pointer;line-height:1;z-index:2;}
   .fb-nav:hover{border-color:var(--cyan-dim);}
   .fb-prev{left:14px;}
   .fb-next{right:14px;}
-  @media(max-width:640px){.flipbook-topbar{padding:10px 4vw;flex-wrap:wrap;}.fb-nav{width:36px;height:36px;font-size:1.1rem;}}
+  @media(max-width:640px){
+    .flipbook-topbar{padding:8px 3vw;flex-wrap:wrap;}
+    .flipbook-page-indicator{font-size:0.72rem;}
+    .fb-btn{width:34px;height:32px;font-size:0.75rem;}
+    .fb-close{font-size:0.9rem;border-color:#e0546b;color:#e0546b;}
+    .fb-nav{width:42px;height:42px;font-size:1.3rem;background:rgba(17,24,35,0.95);border-color:var(--cyan-dim);}
+    .fb-prev{left:6px;} .fb-next{right:6px;}
+  }
 
   /* ---------- status badge (e.g. "Archived") for cards with no live link ---------- */
   .status-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-top:auto;align-self:flex-start;position:relative;z-index:1;}
