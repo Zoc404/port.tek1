@@ -431,9 +431,15 @@
 <div id="pdfViewerOverlay" class="pdf-viewer-overlay" aria-modal="true" role="dialog" aria-hidden="true">
   <div class="pdf-viewer-topbar">
     <span class="pdf-viewer-title">Internship Report — 2026</span>
+    <span class="pdfv-page-indicator" id="pdfvPageIndicator">— / —</span>
     <button type="button" class="pdf-viewer-close" id="pdfViewerClose" title="Close">✕</button>
   </div>
-  <iframe id="pdfViewerFrame" class="pdf-viewer-frame" title="Internship Report PDF"></iframe>
+  <div class="pdfv-stage">
+    <div class="pdfv-loading" id="pdfvLoading">Loading…</div>
+    <canvas id="pdfvCanvas" class="pdfv-canvas"></canvas>
+    <button type="button" class="pdfv-nav pdfv-prev" id="pdfvPrev" aria-label="Previous page">‹</button>
+    <button type="button" class="pdfv-nav pdfv-next" id="pdfvNext" aria-label="Next page">›</button>
+  </div>
 </div>
 
 <!-- ================= CONTACT ================= -->
