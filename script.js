@@ -21,12 +21,23 @@
     if (!soundOn) return;
     try{
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type = 'triangle'; o.frequency.value = 320;
-      g.gain.setValueAtTime(0.06, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-      o.connect(g).connect(audioCtx.destination);
-      o.start(); o.stop(audioCtx.currentTime + 0.15);
+      const ctx = audioCtx, dur = 0.28;
+      const bufferSize = Math.floor(ctx.sampleRate * dur);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++){
+        const t = i / bufferSize;
+        data[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * t); // noise shaped by a smooth envelope
+      }
+      const noise = ctx.createBufferSource(); noise.buffer = buffer;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.14, ctx.currentTime + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      noise.connect(bp).connect(g).connect(ctx.destination);
+      noise.start(); noise.stop(ctx.currentTime + dur);
     }catch(e){}
   }
   function loadImage(src){
@@ -37,6 +48,15 @@
       img.src = src;
     });
   }
+  const stage = document.querySelector('.flipbook-stage');
+  function fitSize(aspect){
+    const w = Math.max(260, stage.clientWidth - 16);
+    const h = Math.max(360, stage.clientHeight - 16);
+    // fit the book's true page aspect ratio inside the available space
+    let fitW = w, fitH = fitW / aspect;
+    if (fitH > h){ fitH = h; fitW = fitH * aspect; }
+    return { width: Math.round(fitW), height: Math.round(fitH) };
+  }
   // imagesFolder/pageCount are set per-book; internship report uses 149 pre-converted JPGs
   window.openFlipbook = async function(imagesFolder, pageCount){
     overlay.classList.add('open');
@@ -45,36 +65,66 @@
     loading.textContent = 'Loading report…';
     root.innerHTML = '';
     zoom = 1; root.style.transform = 'scale(1)';
+    const PRELOAD = 2;
     try{
       await ensureLibs();
       const pad = n => String(n).padStart(3, '0');
-      const firstImg = await loadImage(`${imagesFolder}/page-${pad(1)}.jpg`);
-      const divs = [];
+      const src = i => `${imagesFolder}/page-${pad(i)}.jpg`;
+      const firstImg = await loadImage(src(1));
+      const aspect = firstImg.naturalWidth / firstImg.naturalHeight;
+      const divs = [], imgs = [];
       for (let i = 1; i <= pageCount; i++){
         const div = document.createElement('div');
         div.className = 'page';
         const img = document.createElement('img');
-        img.loading = 'lazy';
-        img.src = `${imagesFolder}/page-${pad(i)}.jpg`;
         img.alt = 'Page ' + i;
+        if (i <= PRELOAD) img.src = src(i); else img.dataset.src = src(i);
         div.appendChild(img);
-        root.appendChild(div); divs.push(div);
+        root.appendChild(div); divs.push(div); imgs.push(img);
       }
+      const { width, height } = fitSize(aspect);
       pageFlip = new St.PageFlip(root, {
-        width: firstImg.naturalWidth, height: firstImg.naturalHeight,
-        size: 'stretch', minWidth: 260, maxWidth: 900, minHeight: 360, maxHeight: 1200,
+        width, height, size: 'fixed',
+        minWidth: 260, maxWidth: 2000, minHeight: 360, maxHeight: 2600,
         showCover: false, mobileScrollSupport: false, useMouseEvents: true, maxShadowOpacity: 0.5
       });
       pageFlip.loadFromHTML(root.querySelectorAll('.page'));
-      pageFlip.on('flip', () => { playFlipSound(); updatePageIndicator(); });
+      function ensureLoaded(idx){
+        const im = imgs[idx];
+        if (im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
+      }
+      function loadAround(centerIdx){
+        for (let d = -1; d <= 2; d++) ensureLoaded(centerIdx + d);
+      }
+      pageFlip.on('flip', (e) => { playFlipSound(); updatePageIndicator(); loadAround(e.data); });
       updatePageIndicator();
       loading.style.display = 'none';
+      loadAround(0);
+      // fill the rest quietly in the background, without blocking the UI
+      let cursor = 0;
+      (function backgroundFill(){
+        if (cursor >= pageCount) return;
+        ensureLoaded(cursor++);
+        setTimeout(backgroundFill, 60);
+      })();
+      window.addEventListener('resize', onFbResize);
     }catch(err){
       loading.textContent = 'Could not load report. Please try again later.';
       return;
     }
     loading.style.display = 'none';
   };
+  let fbResizeTimer;
+  function onFbResize(){
+    clearTimeout(fbResizeTimer);
+    fbResizeTimer = setTimeout(() => {
+      if (!pageFlip || !overlay.classList.contains('open')) return;
+      const img = root.querySelector('img[src]');
+      if (!img || !img.naturalWidth) return;
+      const { width, height } = fitSize(img.naturalWidth / img.naturalHeight);
+      pageFlip.update({ width, height });
+    }, 150);
+  }
   function updatePageIndicator(){
     if (!pageFlip) return;
     pageIndicator.textContent = (pageFlip.getCurrentPageIndex() + 1) + ' / ' + pageFlip.getPageCount();
@@ -84,6 +134,7 @@
     overlay.setAttribute('aria-hidden', 'true');
     if (pageFlip) { try{ pageFlip.destroy(); }catch(e){} pageFlip = null; }
     root.innerHTML = '';
+    window.removeEventListener('resize', onFbResize);
   }
   document.getElementById('fbClose').addEventListener('click', closeFlipbook);
   document.getElementById('fbPrev').addEventListener('click', () => pageFlip && pageFlip.flipPrev());
