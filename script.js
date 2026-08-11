@@ -1,26 +1,106 @@
 // ---- PDF report viewer (Projects & Contributions section only) ----
-// Simple iframe-based viewer: hidden by default, loads the PDF only when opened.
+// Canvas-based, view-only: renders pages as images inside our own UI, so
+// there is no native browser PDF toolbar (no download/print/share button),
+// and every page auto-fits the screen — no pinch-zoom needed on mobile.
 (function(){
   const overlay = document.getElementById('pdfViewerOverlay');
-  const frame = document.getElementById('pdfViewerFrame');
+  const stage = document.querySelector('.pdfv-stage');
+  const canvas = document.getElementById('pdfvCanvas');
+  const ctx = canvas.getContext('2d');
+  const loading = document.getElementById('pdfvLoading');
+  const pageIndicator = document.getElementById('pdfvPageIndicator');
   const closeBtn = document.getElementById('pdfViewerClose');
+  const prevBtn = document.getElementById('pdfvPrev');
+  const nextBtn = document.getElementById('pdfvNext');
 
-  window.openPdfViewer = function(url){
-    frame.src = url;
+  let pdfjsReady, pdfDoc = null, currentPage = 1, totalPages = 0, rendering = false;
+
+  function loadScript(src){
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  function ensurePdfJs(){
+    if (!pdfjsReady) pdfjsReady = loadScript('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js').then(() => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    });
+    return pdfjsReady;
+  }
+
+  async function renderPage(num){
+    if (!pdfDoc || rendering) return;
+    rendering = true;
+    const page = await pdfDoc.getPage(num);
+    const base = page.getViewport({ scale: 1 });
+    // fit the page fully inside the available stage space — no zoom needed
+    const availW = Math.max(200, stage.clientWidth - 16);
+    const availH = Math.max(200, stage.clientHeight - 16);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const fitScale = Math.min(availW / base.width, availH / base.height);
+    const viewport = page.getViewport({ scale: fitScale * dpr });
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    canvas.style.width = (viewport.width / dpr) + 'px';
+    canvas.style.height = (viewport.height / dpr) + 'px';
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    rendering = false;
+    currentPage = num;
+    pageIndicator.textContent = num + ' / ' + totalPages;
+  }
+  function goTo(num){
+    if (!pdfDoc) return;
+    num = Math.min(Math.max(1, num), totalPages);
+    if (num !== currentPage || !canvas.width) renderPage(num);
+  }
+
+  window.openPdfViewer = async function(url){
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    loading.style.display = 'block';
+    loading.textContent = 'Loading…';
+    canvas.width = 0; canvas.height = 0;
+    try{
+      await ensurePdfJs();
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+      totalPages = pdfDoc.numPages;
+      currentPage = 0;
+      await renderPage(1);
+      loading.style.display = 'none';
+    }catch(err){
+      loading.textContent = 'Could not load report. Please try again later.';
+    }
   };
   function closePdfViewer(){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
-    frame.src = ''; // stop loading/free memory once closed
     document.body.style.overflow = '';
+    pdfDoc = null; canvas.width = 0; canvas.height = 0;
   }
   closeBtn.addEventListener('click', closePdfViewer);
+  prevBtn.addEventListener('click', () => goTo(currentPage - 1));
+  nextBtn.addEventListener('click', () => goTo(currentPage + 1));
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closePdfViewer();
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') closePdfViewer();
+    if (e.key === 'ArrowRight') goTo(currentPage + 1);
+    if (e.key === 'ArrowLeft') goTo(currentPage - 1);
   });
+  // swipe left/right to change page on mobile
+  let touchStartX = null;
+  stage.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) goTo(currentPage + (dx < 0 ? 1 : -1));
+    touchStartX = null;
+  }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (overlay.classList.contains('open') && pdfDoc) renderPage(currentPage);
+  });
+  // block right-click / long-press save on the rendered page
+  stage.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
 // ---- Live clock ----
   function updateClock(){
