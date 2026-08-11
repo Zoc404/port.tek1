@@ -14,8 +14,8 @@
     });
   }
   function ensureLibs(){
-    if (!pdfjsReady) pdfjsReady = loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js').then(() => {
-      pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js';
+    if (!pdfjsReady) pdfjsReady = loadScript('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js').then(() => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
     });
     if (!flipLibReady) flipLibReady = loadScript('https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js');
     return Promise.all([pdfjsReady, flipLibReady]);
@@ -33,7 +33,7 @@
     }catch(e){}
   }
   async function renderPdfPages(url){
-    const pdf = await pdfjs.getDocument(url).promise;
+    const pdf = await pdfjsLib.getDocument(url).promise;
     const pages = [];
     for (let i = 1; i <= pdf.numPages; i++){
       const page = await pdf.getPage(i);
