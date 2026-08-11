@@ -1,162 +1,27 @@
-// ---- Flipbook viewer (Projects & Contributions section only) ----
+// ---- PDF report viewer (Projects & Contributions section only) ----
+// Simple iframe-based viewer: hidden by default, loads the PDF only when opened.
 (function(){
-  let flipLibReady, pageFlip, zoom = 1, soundOn = true, audioCtx;
-  const overlay = document.getElementById('flipbookOverlay');
-  const root = document.getElementById('flipbookRoot');
-  const loading = document.getElementById('flipbookLoading');
-  const pageIndicator = document.getElementById('fbPageIndicator');
+  const overlay = document.getElementById('pdfViewerOverlay');
+  const frame = document.getElementById('pdfViewerFrame');
+  const closeBtn = document.getElementById('pdfViewerClose');
 
-  function loadScript(src){
-    return new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = src; s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
-  function ensureLibs(){
-    if (!flipLibReady) flipLibReady = loadScript('https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js');
-    return flipLibReady;
-  }
-  function playFlipSound(){
-    if (!soundOn) return;
-    try{
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      const ctx = audioCtx, dur = 0.28;
-      const bufferSize = Math.floor(ctx.sampleRate * dur);
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++){
-        const t = i / bufferSize;
-        data[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * t); // noise shaped by a smooth envelope
-      }
-      const noise = ctx.createBufferSource(); noise.buffer = buffer;
-      const bp = ctx.createBiquadFilter();
-      bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.7;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.14, ctx.currentTime + 0.03);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
-      noise.connect(bp).connect(g).connect(ctx.destination);
-      noise.start(); noise.stop(ctx.currentTime + dur);
-    }catch(e){}
-  }
-  function loadImage(src){
-    return new Promise((res, rej) => {
-      const img = new Image();
-      img.onload = () => res(img);
-      img.onerror = rej;
-      img.src = src;
-    });
-  }
-  const stage = document.querySelector('.flipbook-stage');
-  function fitSize(aspect){
-    const w = Math.max(260, stage.clientWidth - 16);
-    const h = Math.max(360, stage.clientHeight - 16);
-    // fit the book's true page aspect ratio inside the available space
-    let fitW = w, fitH = fitW / aspect;
-    if (fitH > h){ fitH = h; fitW = fitH * aspect; }
-    return { width: Math.round(fitW), height: Math.round(fitH) };
-  }
-  // imagesFolder/pageCount are set per-book; internship report uses 149 pre-converted JPGs
-  window.openFlipbook = async function(imagesFolder, pageCount){
+  window.openPdfViewer = function(url){
+    frame.src = url;
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
-    loading.style.display = 'block';
-    loading.textContent = 'Loading report…';
-    root.innerHTML = '';
-    zoom = 1; root.style.transform = 'scale(1)';
-    const PRELOAD = 2;
-    try{
-      await ensureLibs();
-      const pad = n => String(n).padStart(3, '0');
-      const src = i => `${imagesFolder}/page-${pad(i)}.jpg`;
-      const firstImg = await loadImage(src(1));
-      const aspect = firstImg.naturalWidth / firstImg.naturalHeight;
-      const divs = [], imgs = [];
-      for (let i = 1; i <= pageCount; i++){
-        const div = document.createElement('div');
-        div.className = 'page';
-        const img = document.createElement('img');
-        img.alt = 'Page ' + i;
-        if (i <= PRELOAD) img.src = src(i); else img.dataset.src = src(i);
-        div.appendChild(img);
-        root.appendChild(div); divs.push(div); imgs.push(img);
-      }
-      const { width, height } = fitSize(aspect);
-      pageFlip = new St.PageFlip(root, {
-        width, height, size: 'fixed',
-        minWidth: 260, maxWidth: 2000, minHeight: 360, maxHeight: 2600,
-        showCover: false, mobileScrollSupport: false, useMouseEvents: true, maxShadowOpacity: 0.5
-      });
-      pageFlip.loadFromHTML(root.querySelectorAll('.page'));
-      function ensureLoaded(idx){
-        const im = imgs[idx];
-        if (im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
-      }
-      function loadAround(centerIdx){
-        for (let d = -1; d <= 2; d++) ensureLoaded(centerIdx + d);
-      }
-      pageFlip.on('flip', (e) => { playFlipSound(); updatePageIndicator(); loadAround(e.data); });
-      updatePageIndicator();
-      loading.style.display = 'none';
-      loadAround(0);
-      // fill the rest quietly in the background, without blocking the UI
-      let cursor = 0;
-      (function backgroundFill(){
-        if (cursor >= pageCount) return;
-        ensureLoaded(cursor++);
-        setTimeout(backgroundFill, 60);
-      })();
-      window.addEventListener('resize', onFbResize);
-    }catch(err){
-      loading.textContent = 'Could not load report. Please try again later.';
-      return;
-    }
-    loading.style.display = 'none';
+    document.body.style.overflow = 'hidden';
   };
-  let fbResizeTimer;
-  function onFbResize(){
-    clearTimeout(fbResizeTimer);
-    fbResizeTimer = setTimeout(() => {
-      if (!pageFlip || !overlay.classList.contains('open')) return;
-      const img = root.querySelector('img[src]');
-      if (!img || !img.naturalWidth) return;
-      const { width, height } = fitSize(img.naturalWidth / img.naturalHeight);
-      pageFlip.update({ width, height });
-    }, 150);
-  }
-  function updatePageIndicator(){
-    if (!pageFlip) return;
-    pageIndicator.textContent = (pageFlip.getCurrentPageIndex() + 1) + ' / ' + pageFlip.getPageCount();
-  }
-  function closeFlipbook(){
+  function closePdfViewer(){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
-    if (pageFlip) { try{ pageFlip.destroy(); }catch(e){} pageFlip = null; }
-    root.innerHTML = '';
-    window.removeEventListener('resize', onFbResize);
+    frame.src = ''; // stop loading/free memory once closed
+    document.body.style.overflow = '';
   }
-  document.getElementById('fbClose').addEventListener('click', closeFlipbook);
-  document.getElementById('fbPrev').addEventListener('click', () => pageFlip && pageFlip.flipPrev());
-  document.getElementById('fbNext').addEventListener('click', () => pageFlip && pageFlip.flipNext());
-  document.getElementById('fbZoomIn').addEventListener('click', () => { zoom = Math.min(zoom + 0.2, 2.4); root.style.transform = 'scale(' + zoom + ')'; });
-  document.getElementById('fbZoomOut').addEventListener('click', () => { zoom = Math.max(zoom - 0.2, 0.6); root.style.transform = 'scale(' + zoom + ')'; });
-  document.getElementById('fbSound').addEventListener('click', function(){
-    soundOn = !soundOn; this.textContent = soundOn ? '🔊' : '🔇'; this.classList.toggle('active', !soundOn);
-  });
-  document.getElementById('fbFullscreen').addEventListener('click', function(){
-    if (!document.fullscreenElement) overlay.requestFullscreen && overlay.requestFullscreen();
-    else document.exitFullscreen && document.exitFullscreen();
-  });
+  closeBtn.addEventListener('click', closePdfViewer);
   document.addEventListener('keydown', (e) => {
-    if (!overlay.classList.contains('open')) return;
-    if (e.key === 'Escape') closeFlipbook();
-    if (e.key === 'ArrowRight') pageFlip && pageFlip.flipNext();
-    if (e.key === 'ArrowLeft') pageFlip && pageFlip.flipPrev();
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closePdfViewer();
   });
-  overlay.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
-
 // ---- Live clock ----
   function updateClock(){
     const now = new Date();
