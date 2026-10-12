@@ -563,3 +563,86 @@
 
     update();
   })();
+
+// ---- Desktop bubble cursor (added) ----
+// The normal mouse cursor is left untouched. A single glossy bubble
+// accompanies it, floating smoothly just behind the pointer; it grows over
+// links / buttons and squeezes on click.
+// Desktop only: runs just when the primary input is a mouse / trackpad
+// ((hover:hover) and (pointer:fine)). On phones / tablets nothing is created
+// and touch behaviour is untouched. Touch / pen pointer events are ignored,
+// and reduced-motion users don't get the bubble.
+(function initBubbleCursor(){
+  'use strict';
+  if (!window.matchMedia || !window.requestAnimationFrame) return;
+
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const FOLLOW = 0.16;   // 1 = glued to the pointer, lower = floatier / lags more
+  const INTERACTIVE = 'a, button, select, summary, label, [role="button"]';
+
+  let el = null, rafId = 0, active = false;
+  let tx = 0, ty = 0, x = 0, y = 0, seen = false;
+
+  function render(){
+    rafId = 0;
+    if (!active || !el) return;
+    x += (tx - x) * FOLLOW;
+    y += (ty - y) * FOLLOW;
+    if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1){ x = tx; y = ty; }
+    el.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)';
+    if (x !== tx || y !== ty) rafId = requestAnimationFrame(render);   // idle = no CPU
+  }
+  function kick(){ if (!rafId && active) rafId = requestAnimationFrame(render); }
+
+  function onMove(e){
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    tx = e.clientX; ty = e.clientY;
+    if (!seen){ seen = true; x = tx; y = ty; }
+    const t = e.target && e.target.closest ? e.target : null;
+    el.classList.toggle('hover', !!(t && t.closest(INTERACTIVE)));
+    el.classList.add('on');
+    kick();
+  }
+  function onDown(e){ if (!e.pointerType || e.pointerType === 'mouse') el.classList.add('down'); }
+  function onUp(){ el.classList.remove('down'); }
+  function hide(){ el.classList.remove('on', 'down'); }
+  function onEnter(){ if (seen) el.classList.add('on'); }
+
+  function enable(){
+    if (active) return;
+    el = document.createElement('div');
+    el.className = 'bubble-cursor';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<div class="bubble-cursor-orb"></div>';
+    document.body.appendChild(el);
+    active = true; seen = false;
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerdown', onDown, { passive: true });
+    window.addEventListener('pointerup', onUp, { passive: true });
+    window.addEventListener('blur', hide);
+    document.documentElement.addEventListener('mouseleave', hide);
+    document.documentElement.addEventListener('mouseenter', onEnter);
+  }
+  function disable(){
+    if (!active) return;
+    active = false;
+    if (rafId){ cancelAnimationFrame(rafId); rafId = 0; }
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerdown', onDown);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('blur', hide);
+    document.documentElement.removeEventListener('mouseleave', hide);
+    document.documentElement.removeEventListener('mouseenter', onEnter);
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    el = null;
+  }
+  function sync(){ if (finePointer.matches && !reducedMotion.matches) enable(); else disable(); }
+
+  [finePointer, reducedMotion].forEach(function(mq){
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+  });
+  sync();
+})();
