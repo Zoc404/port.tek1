@@ -552,3 +552,46 @@
     section{padding:70px 6vw;}
     .research-card{padding:20px 18px;}
   }
+
+/* ---------- desktop bubble cursor (added) ----------
+   The normal mouse cursor stays exactly as it is. One small bubble accompanies
+   it, floating just behind the pointer, styled with the site's cyan/amber
+   theme. Only active on devices with a mouse / trackpad (hover + fine
+   pointer); phones and tablets never match, so mobile is untouched. The
+   bubble never captures clicks. */
+.bubble-cursor{display:none;}
+@media (hover:hover) and (pointer:fine){
+  .bubble-cursor{
+    display:block;position:fixed;top:0;left:0;width:0;height:0;
+    pointer-events:none;z-index:9990;opacity:0;transition:opacity .25s ease;
+    will-change:transform;
+  }
+  .bubble-cursor.on{opacity:1;}
+  .bubble-cursor-orb{
+    position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;
+    background:radial-gradient(circle, rgba(56,211,245,.03) 0%, rgba(56,211,245,.09) 55%, rgba(56,211,245,.2) 100%);
+    box-shadow:0 0 12px rgba(56,211,245,.28), inset 0 0 6px rgba(56,211,245,.16);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1), background .25s ease, box-shadow .25s ease;
+  }
+  /* thin cyan -> amber ring, same colours as the site's glow borders */
+  .bubble-cursor-orb::before{
+    content:"";position:absolute;inset:0;border-radius:50%;padding:1.5px;
+    background:conic-gradient(var(--cyan,#38d3f5), var(--amber,#f5a524), var(--cyan,#38d3f5));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+    animation:bubbleCursorSpin 5s linear infinite;
+  }
+  @keyframes bubbleCursorSpin{to{transform:rotate(360deg);}}
+  .bubble-cursor.hover .bubble-cursor-orb{
+    transform:scale(1.9);
+    background:radial-gradient(circle, rgba(245,165,36,.03) 0%, rgba(245,165,36,.09) 55%, rgba(245,165,36,.2) 100%);
+    box-shadow:0 0 14px rgba(245,165,36,.3), inset 0 0 6px rgba(245,165,36,.16);
+  }
+  .bubble-cursor.hover .bubble-cursor-orb::before{animation-duration:2.2s;}
+  .bubble-cursor.down .bubble-cursor-orb{transform:scale(.8);}
+  .bubble-cursor.hover.down .bubble-cursor-orb{transform:scale(1.5);}
+}
+@media (prefers-reduced-motion:reduce){
+  .bubble-cursor{display:none !important;}
+}
