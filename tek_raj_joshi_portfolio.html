@@ -551,6 +551,48 @@
     section{padding:70px 6vw;}
     .research-card{padding:20px 18px;}
   }
+/* ---------- desktop bubble cursor (added) ----------
+   The normal mouse cursor stays exactly as it is. One small bubble accompanies
+   it, floating just behind the pointer, styled with the site's cyan/amber
+   theme. Only active on devices with a mouse / trackpad (hover + fine
+   pointer); phones and tablets never match, so mobile is untouched. The
+   bubble never captures clicks. */
+.bubble-cursor{display:none;}
+@media (hover:hover) and (pointer:fine){
+  .bubble-cursor{
+    display:block;position:fixed;top:0;left:0;width:0;height:0;
+    pointer-events:none;z-index:9990;opacity:0;transition:opacity .25s ease;
+    will-change:transform;
+  }
+  .bubble-cursor.on{opacity:1;}
+  .bubble-cursor-orb{
+    position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;
+    background:radial-gradient(circle, rgba(56,211,245,.03) 0%, rgba(56,211,245,.09) 55%, rgba(56,211,245,.2) 100%);
+    box-shadow:0 0 12px rgba(56,211,245,.28), inset 0 0 6px rgba(56,211,245,.16);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1), background .25s ease, box-shadow .25s ease;
+  }
+  /* thin cyan -> amber ring, same colours as the site's glow borders */
+  .bubble-cursor-orb::before{
+    content:"";position:absolute;inset:0;border-radius:50%;padding:1.5px;
+    background:conic-gradient(var(--cyan,#38d3f5), var(--amber,#f5a524), var(--cyan,#38d3f5));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+    animation:bubbleCursorSpin 5s linear infinite;
+  }
+  @keyframes bubbleCursorSpin{to{transform:rotate(360deg);}}
+  .bubble-cursor.hover .bubble-cursor-orb{
+    transform:scale(1.9);
+    background:radial-gradient(circle, rgba(245,165,36,.03) 0%, rgba(245,165,36,.09) 55%, rgba(245,165,36,.2) 100%);
+    box-shadow:0 0 14px rgba(245,165,36,.3), inset 0 0 6px rgba(245,165,36,.16);
+  }
+  .bubble-cursor.hover .bubble-cursor-orb::before{animation-duration:2.2s;}
+  .bubble-cursor.down .bubble-cursor-orb{transform:scale(.8);}
+  .bubble-cursor.hover.down .bubble-cursor-orb{transform:scale(1.5);}
+}
+@media (prefers-reduced-motion:reduce){
+  .bubble-cursor{display:none !important;}
+}
 </style>
 </head>
 <body>
@@ -1404,6 +1446,89 @@
     }, { passive: true });
     update();
   })();
+
+// ---- Desktop bubble cursor (added) ----
+// The normal mouse cursor is left untouched. A single glossy bubble
+// accompanies it, floating smoothly just behind the pointer; it grows over
+// links / buttons and squeezes on click.
+// Desktop only: runs just when the primary input is a mouse / trackpad
+// ((hover:hover) and (pointer:fine)). On phones / tablets nothing is created
+// and touch behaviour is untouched. Touch / pen pointer events are ignored,
+// and reduced-motion users don't get the bubble.
+(function initBubbleCursor(){
+  'use strict';
+  if (!window.matchMedia || !window.requestAnimationFrame) return;
+
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const FOLLOW = 0.16;   // 1 = glued to the pointer, lower = floatier / lags more
+  const INTERACTIVE = 'a, button, select, summary, label, [role="button"]';
+
+  let el = null, rafId = 0, active = false;
+  let tx = 0, ty = 0, x = 0, y = 0, seen = false;
+
+  function render(){
+    rafId = 0;
+    if (!active || !el) return;
+    x += (tx - x) * FOLLOW;
+    y += (ty - y) * FOLLOW;
+    if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1){ x = tx; y = ty; }
+    el.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)';
+    if (x !== tx || y !== ty) rafId = requestAnimationFrame(render);   // idle = no CPU
+  }
+  function kick(){ if (!rafId && active) rafId = requestAnimationFrame(render); }
+
+  function onMove(e){
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    tx = e.clientX; ty = e.clientY;
+    if (!seen){ seen = true; x = tx; y = ty; }
+    const t = e.target && e.target.closest ? e.target : null;
+    el.classList.toggle('hover', !!(t && t.closest(INTERACTIVE)));
+    el.classList.add('on');
+    kick();
+  }
+  function onDown(e){ if (!e.pointerType || e.pointerType === 'mouse') el.classList.add('down'); }
+  function onUp(){ el.classList.remove('down'); }
+  function hide(){ el.classList.remove('on', 'down'); }
+  function onEnter(){ if (seen) el.classList.add('on'); }
+
+  function enable(){
+    if (active) return;
+    el = document.createElement('div');
+    el.className = 'bubble-cursor';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<div class="bubble-cursor-orb"></div>';
+    document.body.appendChild(el);
+    active = true; seen = false;
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerdown', onDown, { passive: true });
+    window.addEventListener('pointerup', onUp, { passive: true });
+    window.addEventListener('blur', hide);
+    document.documentElement.addEventListener('mouseleave', hide);
+    document.documentElement.addEventListener('mouseenter', onEnter);
+  }
+  function disable(){
+    if (!active) return;
+    active = false;
+    if (rafId){ cancelAnimationFrame(rafId); rafId = 0; }
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerdown', onDown);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('blur', hide);
+    document.documentElement.removeEventListener('mouseleave', hide);
+    document.documentElement.removeEventListener('mouseenter', onEnter);
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    el = null;
+  }
+  function sync(){ if (finePointer.matches && !reducedMotion.matches) enable(); else disable(); }
+
+  [finePointer, reducedMotion].forEach(function(mq){
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync);
+  });
+  sync();
+})();
 
 </script>
 
